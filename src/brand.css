@@ -1,0 +1,38 @@
+/* The supplied Prince George Towing artwork replaces the former site marks. */
+.site-header .brand {
+  display: block;
+  width: 240px;
+  line-height: 0;
+}
+.brand-image {
+  width: 100%;
+  height: auto;
+}
+.site-header .header-help.button-blue {
+  background: var(--blue);
+}
+.site-header .header-help.button-blue:hover {
+  background: #12396d;
+}
+.footer-monogram {
+  display: block;
+  width: 96px;
+  line-height: 0;
+}
+.footer-monogram img {
+  width: 100%;
+  height: auto;
+}
+@media (min-width: 1600px) {
+  .site-header .brand { width: 270px; }
+}
+@media (max-width: 1180px) {
+  .site-header .brand { width: 205px; }
+}
+@media (max-width: 900px) {
+  .site-header .brand { width: clamp(158px, 20vw, 190px); }
+}
+@media (max-width: 700px) {
+  .site-header .brand { width: clamp(120px, 38vw, 170px); }
+  .footer-monogram { width: 76px; }
+}

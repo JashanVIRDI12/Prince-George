@@ -1,0 +1,216 @@
+.coverage-map.real-coverage-map {
+  overflow: hidden;
+  max-height: none;
+  isolation: isolate;
+}
+.real-coverage-map .coverage-map-heading {
+  padding: 20px 24px;
+}
+.real-map-frame {
+  min-height: 480px;
+  position: relative;
+  flex: 1;
+  background: #e7ebde;
+}
+.real-map-frame .live-coverage-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  background: #e7ebde;
+  color: var(--night);
+  font-family: var(--body);
+}
+.real-coverage-map .leaflet-container {
+  font-family: var(--body);
+}
+.real-coverage-map .leaflet-control-zoom {
+  margin: 15px;
+  border: 1px solid #bac6ce;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px #081e301a;
+}
+.real-coverage-map .leaflet-control-zoom a {
+  width: 39px;
+  height: 39px;
+  line-height: 39px;
+  color: var(--night);
+  background: #fff;
+}
+.real-coverage-map .leaflet-control-zoom a:hover {
+  color: var(--blue);
+  background: #f4f6f7;
+}
+.real-coverage-map .leaflet-control-attribution {
+  background: #fffffff2;
+  color: #263e4d;
+  font-size: 10px;
+  padding: 3px 6px;
+  line-height: 1.4;
+}
+.real-coverage-map .leaflet-control-attribution a {
+  color: var(--blue);
+  text-decoration: underline;
+}
+.real-coverage-map .leaflet-control-scale-line {
+  color: #263e4d;
+  border-color: #263e4d;
+  background: #fffffff2;
+  font-size: 10px;
+}
+.real-area-marker {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+}
+.real-marker-pin {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 40px;
+  background: var(--blue);
+  color: #fff;
+  border: 2px solid white;
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 0 3px 8px #081e3045;
+}
+.real-marker-pin svg {
+  width: 22px;
+  height: 22px;
+}
+.real-area-marker.is-selected .real-marker-pin {
+  background: var(--orange);
+  color: var(--night);
+}
+.real-coverage-map .real-area-tooltip {
+  background: var(--night);
+  color: #fff;
+  border: 0;
+  box-shadow: 0 2px 8px #081e3025;
+  padding: 8px 12px;
+  font: 650 11px / 1.4 var(--body);
+}
+.real-coverage-map .real-area-tooltip::before {
+  border-top-color: var(--night);
+}
+.map-reset {
+  position: absolute;
+  z-index: 1;
+  left: 15px;
+  top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid #bac6ce;
+  border-radius: 4px;
+  background: #fff;
+  color: #172c3d;
+  font-size: 11px;
+  font-weight: 650;
+  box-shadow: 0 2px 8px #081e301a;
+}
+.map-reset .icon {
+  width: 17px;
+  height: 17px;
+  color: var(--blue);
+}
+.map-reset:hover {
+  background: #f4f6f7;
+}
+.map-loading,
+.map-load-error {
+  position: absolute;
+  z-index: 1;
+  left: 15px;
+  right: 15px;
+  bottom: 40px;
+  background: #fff;
+  color: #172c3d;
+  border: 1px solid #cbd4da;
+  border-radius: 4px;
+  padding: 16px;
+  font-size: 12px;
+  line-height: 1.6;
+  box-shadow: 0 2px 8px #081e301a;
+}
+.map-loading {
+  left: 50%;
+  right: auto;
+  bottom: 50%;
+  transform: translate(-50%, 50%);
+  white-space: nowrap;
+}
+.map-load-error strong,
+.map-load-error > span {
+  display: block;
+}
+.map-load-error > span {
+  font-size: 11px;
+  margin: 3px 0 10px;
+}
+.map-load-error button {
+  color: #fff;
+  background: var(--blue);
+  padding: 10px 16px;
+  font-size: 11px;
+  font-weight: 650;
+  border-radius: 3px;
+}
+.real-map-footer {
+  padding: 17px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  color: #d0dce5;
+  font-size: 10px;
+  line-height: 1.6;
+}
+.real-map-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  font-size: 11px;
+  font-weight: 650;
+  min-height: 32px;
+}
+.real-map-footer a:hover {
+  text-decoration: underline;
+}
+.real-map-footer .icon {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 1100px) {
+  .real-map-footer {
+    flex-wrap: wrap;
+    gap: 5px 15px;
+  }
+}
+@media (max-width: 600px) {
+  .real-coverage-map .coverage-map-heading {
+    padding: 18px;
+    font-size: 7px;
+  }
+  .real-map-frame {
+    min-height: 360px;
+  }
+  .real-map-footer {
+    padding: 13px 18px;
+    font-size: 9px;
+  }
+  .real-map-footer a {
+    font-size: 10px;
+  }
+  .real-coverage-map .leaflet-control-attribution {
+    font-size: 9px;
+  }
+  .real-coverage-map .leaflet-control-scale-line {
+    font-size: 9px;
+  }
+}
