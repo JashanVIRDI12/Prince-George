@@ -24,7 +24,7 @@ test("contact loads directly, reloads, and connects to navigation and footer", a
 }) => {
   await expect(page).toHaveTitle("Contact | Prince George Towing");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Need a tow? We're on it.",
+    "Need a tow? Let's get you moving.",
   );
   await expect(page.locator(".ct-hero-media img")).toHaveJSProperty("naturalWidth", 1536);
   await page.reload();
@@ -110,21 +110,21 @@ test("service chooser works by keyboard and opens the matching request", async (
   await roadside.press("End");
   const heavy = page.getByRole("tab", { name: /Heavy-duty hauling/ });
   await expect(heavy).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByRole("tabpanel")).toContainText("Tell us about the load.");
+  await expect(page.getByRole("tabpanel")).toContainText("The right plan for the load.");
   await expect(page.locator(".ct-selector-media img")).toHaveAttribute("src", "/images/heavy-recovery.webp");
   await expect.poll(() => page.locator(".ct-selector-media img").evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
-  await page.getByRole("button", { name: "Prepare a heavy-duty request" }).click();
+  await page.getByRole("tabpanel").getByRole("button", { name: "Request help" }).click();
   await expect(page.getByRole("radio", { name: "Heavy-duty hauling" })).toBeChecked();
 });
 
 test("questions open and close one at a time, by pointer and keyboard", async ({
   page,
 }) => {
-  const first = page.getByRole("button", { name: /What do I do while I wait/ });
-  const cost = page.getByRole("button", { name: /What is this going to cost/ });
+  const first = page.getByRole("button", { name: /What should I do while I wait for help/ });
+  const cost = page.getByRole("button", { name: /How quickly can you reach my location/ });
   await expect(first).toHaveAttribute("aria-expanded", "true");
   await expect(
-    page.getByText("get out of traffic and put your hazards on", {
+    page.getByText("move away from traffic and turn on your hazard lights", {
       exact: false,
     }),
   ).toBeVisible();
@@ -133,7 +133,7 @@ test("questions open and close one at a time, by pointer and keyboard", async ({
   await expect(cost).toHaveAttribute("aria-expanded", "true");
   await expect(first).toHaveAttribute("aria-expanded", "false");
   await expect(
-    page.getByText("It depends on the vehicle, where it is", { exact: false }),
+    page.getByText("Response times depend on your location", { exact: false }),
   ).toBeVisible();
 
   await cost.press("Enter");
@@ -167,7 +167,7 @@ test("contact layout fits all screen sizes", async ({ page }) => {
 });
 
 test("contact passes accessibility checks", async ({ page }) => {
-  await page.getByRole("button", { name: /Do you go long-distance/ }).click();
+  await page.getByRole("button", { name: /Do you provide service outside Prince George/ }).click();
   const result = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
@@ -187,9 +187,9 @@ test("contact motion keeps the page usable and error free", async ({
   const header = await page.locator(".site-header").boundingBox();
   expect(title.y).toBeGreaterThanOrEqual(header.y + header.height);
 
-  await page.getByRole("button", { name: /jump-start/ }).click();
+  await page.getByRole("button", { name: /roadside assistance or a tow/ }).click();
   await expect(
-    page.getByText("Roadside help covers battery boosts", { exact: false }),
+    page.getByText("determine whether a roadside solution or vehicle transport", { exact: false }),
   ).toBeVisible();
 
   // The checklist remains reachable in normal reading order.

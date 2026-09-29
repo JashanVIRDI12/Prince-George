@@ -369,6 +369,7 @@ export default function App({ page = "home" }) {
   const servicesCloseTimer = useRef(null);
   const [request, setRequest] = useState(null);
   const [service, setService] = useState(null);
+  const modal = service && (service.modal || service);
   const help = (type = "towing") => {
     setMenuOpen(false);
     setService(null);
@@ -710,34 +711,33 @@ export default function App({ page = "home" }) {
             <section className="hero" id="home">
               <div className="hero-text">
                 <div className="eyebrow hero-eyebrow">
-                  <span className="status-dot" /> PRINCE GEORGE, BC & THE ROADS
-                  BEYOND
+                  <span className="status-dot" /> YOUR LOCAL TOWING SUPPORT
                 </div>
                 <h1 className="hero-title">
                   <span className="hero-title-line">
-                    <span>BAD DAY?</span>
+                    <span>STUCK ON</span>
                   </span>
                   <span className="hero-title-line">
-                    <span>GOOD</span>
+                    <span>THE ROAD?</span>
                   </span>
                   <span className="hero-title-line">
                     <span>
-                      BACKUP<span className="title-period">.</span>
+                      CALL US<span className="title-period">.</span>
                     </span>
                   </span>
                 </h1>
                 <div className="hero-bottom-content">
                   <p>
-                    Wrong turn. Flat tire. Life happens.
-                    <br />
-                    We’ll get you back where you belong.
+                    Towing and roadside assistance in Prince George, BC. Tell
+                    us where you are and what happened, and we’ll help you get
+                    moving.
                   </p>
                   <ActionButton
                     onClick={() => help()}
                     className="button-blue hero-cta"
                     icon="arrow"
                   >
-                    Let’s get you moving
+                    Get in touch with us
                   </ActionButton>
                   <div className="hero-small-note">
                     <Icon name="clock" />
@@ -808,7 +808,7 @@ export default function App({ page = "home" }) {
           Get help now <Icon name="arrow" />
         </button>
       </div>
-      {service && (
+      {service && modal && (
         <Modal
           onClose={() => setService(null)}
           titleId="service-title"
@@ -824,26 +824,32 @@ export default function App({ page = "home" }) {
             width="1536"
             height="1024"
           />
-          <h2 id="service-title">{service.title}</h2>
-          <p className="modal-lead">{service.description}</p>
+          <h2 id="service-title">{modal.title}</h2>
+          <p className="modal-lead">{modal.description}</p>
           <div className="modal-tags">
-            {service.tags.map((tag) => (
+            {modal.tags.map((tag) => (
               <span key={tag}>
                 <Icon name="check" />
                 {tag}
               </span>
             ))}
           </div>
-          <p className="service-detail">{service.detail}</p>
+          {modal.detail && <p className="service-detail">{modal.detail}</p>}
           <ActionButton
             className="button-blue"
             onClick={() => help(service.id)}
           >
-            Get help with this
+            {modal.action || "Get help with this"}
           </ActionButton>
-          <a className="service-modal-page-link" href={`/services/${service.id}/`}>
-            Explore {service.title} <Icon name="arrow" />
-          </a>
+          {service.modal ? (
+            <a className="service-modal-page-link" href="/services/">
+              Explore our services <Icon name="arrow" />
+            </a>
+          ) : (
+            <a className="service-modal-page-link" href={`/services/${service.id}/`}>
+              Explore {service.title} <Icon name="arrow" />
+            </a>
+          )}
         </Modal>
       )}
       {request && (

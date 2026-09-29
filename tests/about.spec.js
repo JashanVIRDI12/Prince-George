@@ -22,7 +22,7 @@ test("about loads directly, reloads, and connects to main navigation and footer"
 }) => {
   await expect(page).toHaveTitle("About Us | Prince George Towing");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "The good part of a bad day.",
+    "The help you need when things stop moving",
   );
   await page.reload();
   const missing = await page
@@ -37,7 +37,7 @@ test("about loads directly, reloads, and connects to main navigation and footer"
     .getByRole("link", { name: "Prince George Towing, home", exact: true })
     .click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "BAD DAY?",
+    "STUCK ON",
   );
   if (isMobile) {
     await page.getByRole("button", { name: "Open navigation" }).click();
@@ -77,7 +77,7 @@ test("the four steps read in the order a call happens", async ({ page }) => {
   await expect(steps.getByRole("heading", { level: 3 })).toHaveText([
     "We listen.",
     "We plan the job.",
-    "You get the price.",
+    "You get the details.",
     "We get you moving.",
   ]);
 });
@@ -87,7 +87,7 @@ test("road tabs control the real map by pointer and keyboard", async ({
 }) => {
   const tabs = page.getByRole("tablist", { name: "Roads out of Prince George" });
   const panel = page.getByRole("tabpanel");
-  await expect(panel).toContainText("From a downtown parking lot");
+  await expect(panel).toContainText("From city streets to nearby highways");
   await expect(page.locator(".ab-roads-sketch")).toHaveCount(0);
   await page.locator(".ab-roads-map").scrollIntoViewIfNeeded();
   const localMap = page.locator(".ab-roads-map .leaflet-container");
@@ -95,10 +95,10 @@ test("road tabs control the real map by pointer and keyboard", async ({
   await expect(page.locator(".ab-roads-map .real-area-marker")).toHaveCount(4);
   await expect(page.locator(".ab-roads-map .leaflet-control-attribution")).toContainText("OpenStreetMap");
   await page.locator(".ab-roads-map").getByRole("button", { name: "Show Highway 16 West coverage" }).click();
-  await expect(panel).toContainText("Heading west on the Yellowhead.");
+  await expect(panel).toContainText("Travelling west?");
   await expect(tabs.getByRole("tab", { name: /Highway 16 West/ })).toHaveAttribute("aria-selected", "true");
   await tabs.getByRole("tab", { name: /Highway 16 West/ }).click();
-  await expect(panel).toContainText("Heading west on the Yellowhead.");
+  await expect(panel).toContainText("Travelling west?");
   await expect(localMap).toHaveAttribute("data-area", "west");
   await expect(tabs.getByRole("tab", { name: /Highway 16 West/ })).toHaveAttribute(
     "aria-selected",
@@ -106,13 +106,13 @@ test("road tabs control the real map by pointer and keyboard", async ({
   );
   await page.keyboard.press("End");
   await expect(tabs.getByRole("tab", { name: /Highway 97 South/ })).toBeFocused();
-  await expect(panel).toContainText("The Cariboo Highway.");
+  await expect(panel).toContainText("The Cariboo Highway route");
   await page.keyboard.press("ArrowRight");
   await expect(tabs.getByRole("tab", { name: /Prince George/ })).toBeFocused();
   await page.keyboard.press("ArrowLeft");
   await expect(tabs.getByRole("tab", { name: /Highway 97 South/ })).toBeFocused();
   await page.keyboard.press("Home");
-  await expect(panel).toContainText("From a downtown parking lot");
+  await expect(panel).toContainText("From city streets to nearby highways");
   await page
     .getByRole("link", { name: "Explore service areas", exact: true })
     .click();
@@ -171,7 +171,7 @@ test("about interactive content passes accessibility checks", async ({
 });
 
 test("field scenes show the equipment and update their service detail", async ({ page }) => {
-  const gallery = page.getByRole("region", { name: "The work, up close." });
+  const gallery = page.getByRole("region", { name: "Every call has a story" });
   const buttons = gallery.locator(".ab-field-card");
   await expect(buttons).toHaveCount(3);
   await expect(gallery.locator(".ab-field-card img")).toHaveCount(3);
@@ -183,7 +183,7 @@ test("field scenes show the equipment and update their service detail", async ({
   await buttons.nth(2).focus();
   await page.keyboard.press("Enter");
   await expect(buttons.nth(2)).toHaveAttribute("aria-pressed", "true");
-  await expect(gallery.locator("#ab-field-detail")).toContainText("The right plan for the load.");
+  await expect(gallery.locator("#ab-field-detail")).toContainText("The right move for heavy loads");
 });
 
 test("with motion, the title reveals and scene selection changes layout", async ({ page }) => {
@@ -192,7 +192,7 @@ test("with motion, the title reveals and scene selection changes layout", async 
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/about/");
   const title = page.getByRole("heading", { level: 1 });
-  await expect(title).toContainText("The good part of a bad day.");
+  await expect(title).toContainText("The help you need when things stop moving");
   await expect(title).toBeVisible();
   await expect(page.locator(".ab-title-line").first()).toBeVisible();
   const cards = page.locator(".ab-field-card");
@@ -210,6 +210,6 @@ test("with motion, the title reveals and scene selection changes layout", async 
   const header = await page.locator(".site-header").boundingBox();
   expect(top.y).toBeGreaterThanOrEqual(header.y + header.height);
   await page.getByRole("tab", { name: /Highway 97 North/ }).click();
-  await expect(page.getByRole("tabpanel")).toContainText("Northern road, northern weather.");
+  await expect(page.getByRole("tabpanel")).toContainText("Heading north from Prince George");
   expect(errors).toEqual([]);
 });

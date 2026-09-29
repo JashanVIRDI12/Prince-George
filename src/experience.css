@@ -514,6 +514,25 @@
   font-style: normal;
   color: var(--blue);
 }
+.answer-safety {
+  margin: auto 0 22px;
+  padding-top: 16px;
+  border-top: 1px solid #a2b1ba;
+}
+.answer-safety strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+}
+.field-answer .answer-safety p {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.answer-safety + .answer-bottom {
+  margin-top: 0;
+}
 .field-answer .editorial-link {
   margin-top: auto;
   align-self: start;

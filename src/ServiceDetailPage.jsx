@@ -61,7 +61,7 @@ export default function ServiceDetailPage({ id, onHelp }) {
           <p>{page.capabilityLead}</p>
         </div>
         <div className="sd-capability-list">
-          {service.features.map(([title, description], index) => (
+          {(page.features || service.features).map(([title, description], index) => (
             <details key={title}>
               <summary>
                 <span className="sd-capability-number">0{index + 1}</span>
@@ -82,7 +82,7 @@ export default function ServiceDetailPage({ id, onHelp }) {
         <div className="sd-field-copy">
           <span className="sd-kicker">03 / BEFORE YOU CALL</span>
           <h2 id="sd-field-title">{page.fieldHeading}</h2>
-          <p>{service.prepare}</p>
+          <p>{page.fieldCopy || service.prepare}</p>
           <ol className="sd-checklist">
             {page.steps.map(([title, description], index) => (
               <li key={title}><span>0{index + 1}</span><div><strong>{title}</strong><p>{description}</p></div></li>

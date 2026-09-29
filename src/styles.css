@@ -394,7 +394,7 @@ section[id] {
 }
 .hero-title {
   font-family: var(--display);
-  font-size: clamp(126px, 12.3vw, 196px);
+  font-size: clamp(110px, 10.75vw, 171px);
   font-weight: 800;
   line-height: 0.85;
   letter-spacing: -3.4px;
@@ -419,6 +419,7 @@ section[id] {
   margin-top: 28px;
 }
 .hero-bottom-content > p {
+  max-width: 470px;
   font-size: 15px;
   font-weight: 500;
   line-height: 1.6;
@@ -1755,7 +1756,7 @@ section[id] {
     max-height: 860px;
   }
   .hero-title {
-    font-size: clamp(118px, 13vw, 153px);
+    font-size: clamp(103px, 11.4vw, 134px);
   }
   .hero-visual {
     width: 88%;
@@ -1869,7 +1870,7 @@ section[id] {
     min-height: 760px;
   }
   .hero-title {
-    font-size: 124px;
+    font-size: 108px;
     letter-spacing: -2px;
   }
   .hero-visual {
@@ -2159,7 +2160,7 @@ section[id] {
     height: 5px;
   }
   .hero-title {
-    font-size: clamp(111px, 24.5vw, 159px);
+    font-size: clamp(97px, 21.4vw, 139px);
     letter-spacing: -2.5px;
     margin-top: 22px;
     line-height: 0.85;
@@ -2764,7 +2765,7 @@ section[id] {
     min-height: 1080px;
   }
   .hero-title {
-    font-size: clamp(125px, 23vw, 159px);
+    font-size: clamp(109px, 20.1vw, 139px);
   }
   .hero-visual {
     top: 340px;
@@ -2819,7 +2820,7 @@ section[id] {
     gap: 10px;
   }
   .hero-title {
-    font-size: 104px;
+    font-size: 91px;
   }
   .hero {
     min-height: 930px;
@@ -2911,7 +2912,7 @@ section[id] {
     min-height: 0;
   }
   .hero-title {
-    font-size: calc(29vw - 13px);
+    font-size: calc(25.4vw - 11.4px);
     letter-spacing: -2px;
   }
   .hero-text {

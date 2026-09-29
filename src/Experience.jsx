@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { services, areas, faqs, business } from "./data";
+import { services, areas, faqs, business, vehicleRecoveryModal } from "./data";
 import { Icon } from "./icons";
 import CoverageMap from "./CoverageMap";
 
@@ -13,9 +13,9 @@ export const serviceVisuals = {
     alt: "Gloved hands securing a vehicle wheel to a recovery flatbed with an orange strap",
     title: (
       <>
-        A careful lift.
+        Reliable recovery.
         <br />
-        <em>A fresh start.</em>
+        <em>Safe transport.</em>
       </>
     ),
     category: "RECOVERY / TRANSPORT",
@@ -25,9 +25,9 @@ export const serviceVisuals = {
     alt: "A roadside professional connecting a jump starter beneath a vehicle hood",
     title: (
       <>
-        A small fix.
+        Small problem.
         <br />
-        <em>A big relief.</em>
+        <em>Quick solution.</em>
       </>
     ),
     category: "ASSISTANCE / REPAIR",
@@ -37,9 +37,9 @@ export const serviceVisuals = {
     alt: "Blue heavy-duty recovery truck transporting a semi truck on a northern highway",
     title: (
       <>
-        Serious capability.
+        Powerful equipment.
         <br />
-        <em>Steady hands.</em>
+        <em>Professional handling.</em>
       </>
     ),
     category: "COMMERCIAL / HEAVY DUTY",
@@ -97,31 +97,32 @@ function CompanyIntro({ onHelp, onService }) {
       <div className="company-copy">
         <Chapter number="01">YOUR LOCAL TOWING COMPANY</Chapter>
         <h2 className="company-heading exp-reveal" id="company-heading">
-          The right help.
+          Tell us what happened.
           <br />
-          <span>When you need it.</span>
+          <span>We’ll take it from there.</span>
         </h2>
         <p className="company-lead">
-          Towing, recovery, and roadside assistance in Prince George and the
-          surrounding area.
+          If your car is not starting or needs a tow, Prince George Towing helps
+          drivers in Prince George and the surrounding area find the right next
+          step.
         </p>
         <p className="company-body">
-          A breakdown is enough to deal with. Tell us where you are and what you
-          drive. We’ll help you work out the next step, confirm the equipment,
-          and talk through the cost.
+          Call with your location, vehicle type, and a brief description of the
+          problem. We’ll discuss the help you need, where the vehicle needs to
+          go, and the cost before work begins.
         </p>
         <ul className="company-promises">
           <li>
             <Icon name="check" />
-            <span>Help for cars, trucks, RVs, and commercial vehicles</span>
+            <span>Towing and roadside help for everyday breakdowns</span>
           </li>
           <li>
             <Icon name="check" />
-            <span>Service and pricing discussed before the job</span>
+            <span>Clear discussion of the service and cost before the job</span>
           </li>
           <li>
             <Icon name="check" />
-            <span>Transport to your chosen repair shop or destination</span>
+            <span>Vehicle transport to your chosen destination</span>
           </li>
         </ul>
         <div className="company-actions">
@@ -129,16 +130,21 @@ function CompanyIntro({ onHelp, onService }) {
             Get towing help
           </EditorialLink>
           <a className="company-secondary" href="/services/">
-            Explore our services <Icon name="right" />
+            View our services <Icon name="right" />
           </a>
           <a className="company-secondary" href="/about/">
-            More about us <Icon name="right" />
+            About us <Icon name="right" />
           </a>
         </div>
       </div>
       <div className="company-service-strip">
         {[
-          { id: "towing", icon: "shield", title: "Towing & recovery" },
+          {
+            id: "towing",
+            icon: "shield",
+            title: "Towing & recovery",
+            modal: vehicleRecoveryModal,
+          },
           { id: "roadside", icon: "clock", title: "Roadside assistance" },
           { id: "towing", icon: "pin", title: "Local & long-distance" },
         ].map((item) => (
@@ -146,7 +152,8 @@ function CompanyIntro({ onHelp, onService }) {
             key={item.title}
             onClick={(event) => {
               event.currentTarget.focus();
-              onService(services.find((service) => service.id === item.id));
+              const service = services.find((entry) => entry.id === item.id);
+              onService(item.modal ? { ...service, modal: item.modal } : service);
             }}
           >
             <Icon name={item.icon} />
@@ -208,15 +215,15 @@ function ServiceShowcase({ onService, onHelp }) {
             THE RIGHT KIND OF HELP
           </Chapter>
           <h2 className="editorial-heading exp-reveal">
-            Towing & recovery.
+            Reliable help for
             <br />
-            Roadside assistance.
+            every roadside situation.
           </h2>
         </div>
         <p>
-          Different situations.
+          Unexpected breakdowns? Vehicle recovery needed?
           <br />
-          The same care, every time.
+          Don’t worry, we provide the right support when you need it most.
         </p>
       </div>
       <div className="lab-layout">
@@ -323,42 +330,42 @@ const serviceSteps = [
     title: "Tell us what happened",
     short: "Share your location and vehicle details.",
     icon: "phone",
-    heading: "A few details help us get it right.",
-    text: "Start with where you are, what you drive, and the problem. A nearby intersection, highway marker, or landmark helps us find you.",
+    heading: "Tell us what happened",
+    text: "Start by sharing your location, vehicle details, and what went wrong. The more we know, the better we can understand the situation and send the right help.",
     checklist: [
-      "Your location and a callback number",
+      "Your location and callback number",
       "Vehicle make, model, and condition",
       "What happened and where you need to go",
     ],
-    note: "Not sure which service you need? Describe the problem and we’ll talk it through.",
+    note: "Not sure what service you need? Just explain the situation, and we’ll help guide you through the next step.",
     action: "Prepare your request",
   },
   {
     title: "Confirm the plan",
     short: "Understand the service, cost, and next step.",
     icon: "check",
-    heading: "Know what to expect before we start.",
-    text: "We discuss the right equipment, service availability, and pricing for your situation. Ask any questions before arranging the job.",
+    heading: "Know what to expect before we start",
+    text: "We’ll confirm the right service, equipment, and estimated cost based on your situation. You’ll know the plan before we begin, with clear communication throughout the process.",
     checklist: [
-      "The service and equipment your vehicle needs",
-      "Pricing and any additional charges",
-      "Availability and the pickup destination",
+      "The service and equipment your vehicle requires",
+      "Pricing and any additional details before starting",
+      "Pickup location and destination details",
     ],
-    note: "Arrival times depend on your location, road conditions, and equipment availability.",
+    note: "Every situation is different. We’ll help determine the right approach based on your vehicle, location, and the support you need.",
     action: "Discuss your situation",
   },
   {
     title: "Get moving again",
     short: "Roadside help or transport to your destination.",
     icon: "right",
-    heading: "The right solution for your vehicle.",
-    text: "Some problems can be resolved at the roadside. If your vehicle needs a tow, we’ll arrange transport to the agreed repair shop or destination.",
+    heading: "The right solution for your vehicle",
+    text: "Once we understand your situation, we’ll provide the support your vehicle needs. Whether it can be resolved roadside or requires transportation, we’ll help get you to the next destination safely.",
     checklist: [
-      "Roadside assistance where appropriate",
-      "Vehicle recovery and loading for transport",
-      "Delivery to the agreed destination",
+      "Roadside assistance where possible",
+      "Safe vehicle recovery and loading",
+      "Transport to your chosen destination",
     ],
-    note: "Have any access restrictions or special vehicle requirements? Let us know before pickup.",
+    note: "Have specific access requirements or vehicle concerns? Let us know before pickup so we can prepare the right approach.",
     action: "Get help with your vehicle",
   },
 ];
@@ -487,7 +494,7 @@ function ServiceProcess({ onHelp }) {
 
 function ServiceAreas({ onHelp }) {
   const [active, setActive] = useState(0);
-  const area = areas[active];
+  const area = { ...areas[active], ...areas[active].home };
   const keydown = (event) => {
     if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -666,6 +673,16 @@ function FieldNotes({ onHelp }) {
               </span>
               <h3>{faqs[selected][0]}</h3>
               <p>{faqs[selected][1]}</p>
+              <div className="answer-safety">
+                <strong>Stay safe while waiting for help</strong>
+                <p>
+                  If your vehicle breaks down, move to a safe location if
+                  possible and turn on your hazard lights. Avoid standing near
+                  traffic and keep your phone available so you can communicate
+                  with our team when we arrive. A few simple steps can make a
+                  difference.
+                </p>
+              </div>
               <div className="answer-bottom">
                 <span>A LITTLE CLARITY GOES A LONG WAY.</span>
                 <span>PG.</span>

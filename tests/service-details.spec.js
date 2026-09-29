@@ -4,7 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 const pages = [
   ["towing", "Towing & Recovery", "Towing & recovery", "Get towing help"],
   ["roadside", "Roadside Assistance", "Roadside assistance", "Get roadside help"],
-  ["heavy", "Heavy-Duty Hauling", "Heavy-duty hauling", "Arrange heavy-duty help"],
+  ["heavy", "Heavy-Duty Hauling", "Heavy-duty hauling", "Get heavy-duty help"],
 ];
 
 test.beforeEach(async ({ page }) => {

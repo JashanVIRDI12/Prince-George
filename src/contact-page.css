@@ -90,7 +90,7 @@
   letter-spacing: -.015em;
   text-transform: uppercase;
 }
-.ct-title em { display: inline-block; padding-top: .06em; color: #ffac80; font-size: .71em; font-style: italic; line-height: 1; text-transform: none; white-space: nowrap; }
+.ct-title em { display: inline-block; padding-top: .06em; color: #ffac80; font-size: .71em; font-style: italic; line-height: 1; text-transform: none; }
 .ct-lede {
   max-width: 43ch;
   margin-top: clamp(25px, 2.8vw, 39px) !important;

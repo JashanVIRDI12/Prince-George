@@ -17,7 +17,7 @@ test("services page loads directly, survives reload, and connects to the homepag
     "Towing & Roadside Services | Prince George Towing",
   );
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Towing &roadside help.",
+    "Towing &roadside solutions.",
   );
   await page.reload();
   await expect(page.locator(".services-page")).toBeVisible();
@@ -33,7 +33,7 @@ test("services page loads directly, survives reload, and connects to the homepag
     .getByRole("link", { name: "Prince George Towing, home", exact: true })
     .click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "BAD DAY?",
+    "STUCK ON",
   );
   if (isMobile) {
     await page.getByRole("button", { name: "Open navigation" }).click();
@@ -55,7 +55,7 @@ test("services page loads directly, survives reload, and connects to the homepag
     .click();
   await expect(page).toHaveURL(/\/about\/$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "The good part of a bad day.",
+    "The help you need when things stop moving",
   );
   expect(errors).toEqual([]);
 });
@@ -66,7 +66,7 @@ test("each service request opens with the right selection and restores focus", a
   for (const [id, action, service] of [
     ["towing", "Get towing help", "Towing & recovery"],
     ["roadside", "Get roadside help", "Roadside assistance"],
-    ["heavy", "Arrange heavy-duty help", "Heavy-duty hauling"],
+    ["heavy", "Get heavy-duty help", "Heavy-duty hauling"],
   ]) {
     const button = page
       .locator(`#${id}`)
@@ -82,7 +82,9 @@ test("each service request opens with the right selection and restores focus", a
 test("service finder supports keyboard choice, matching details, and requests", async ({
   page,
 }) => {
-  await page.getByRole("link", { name: "Find my service" }).click();
+  await page.getByRole("link", { name: "Explore our services" }).click();
+  await expect(page.locator("#our-services")).toBeInViewport();
+  await page.locator("#service-finder").scrollIntoViewIfNeeded();
   const tabs = page.getByRole("tablist", {
     name: "Choose your vehicle situation",
   });
@@ -109,7 +111,7 @@ test("service finder supports keyboard choice, matching details, and requests", 
   await expect(
     tabs.getByRole("tab", { name: "Flat tire, lockout, or fuel" }),
   ).toBeFocused();
-  await expect(panel).toContainText("Help at the roadside.");
+  await expect(panel).toContainText("Help at roadside.");
 });
 
 test("preparation details and questions work with keyboard and pass accessibility checks", async ({
@@ -123,14 +125,14 @@ test("preparation details and questions work with keyboard and pass accessibilit
     "",
   );
   await expect(page.locator("#towing .svc-preparation p")).toContainText(
-    "pickup location",
+    "destination information",
   );
   const question = page
     .locator(".svc-faq-list summary")
     .filter({ hasText: "What is this going to cost me?" });
   await question.click();
   await expect(page.locator(".svc-faq-list details[open] p")).toContainText(
-    "It depends on the vehicle",
+    "The cost depends on the service required",
   );
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
@@ -148,7 +150,7 @@ test("service capabilities expand with keyboard and preserve the requested servi
   await capability.locator("summary").press("Enter");
   await expect(capability).toHaveAttribute("open", "");
   await expect(capability.locator("p")).toBeVisible();
-  await expect(capability.locator("p")).toContainText("loading requirements");
+  await expect(capability.locator("p")).toContainText("secure transportation");
   await capability.locator("summary").press("Enter");
   await expect(capability).not.toHaveAttribute("open", "");
 });
@@ -329,7 +331,7 @@ test("direct service links clear the sticky navigation and work with motion enab
   expect(heading.y).toBeGreaterThanOrEqual(navigation.y + navigation.height);
   await page
     .locator("#heavy")
-    .getByRole("button", { name: "Arrange heavy-duty help" })
+    .getByRole("button", { name: "Get heavy-duty help" })
     .click();
   await expect(page.getByRole("dialog")).toBeVisible();
   expect(errors).toEqual([]);

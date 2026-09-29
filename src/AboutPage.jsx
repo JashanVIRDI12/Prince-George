@@ -28,24 +28,23 @@ const fontsLanded = () =>
     () => document.fonts.ready,
   );
 
-// The same four steps, in the order they happen. Drawn from the request flow
-// and the service copy in data.js, not invented.
+// The four steps, in the order they happen.
 const steps = [
   [
     "We listen.",
-    "Where you are, what you drive, and what happened. Not sure is a complete answer.",
+    "Tell us where you are, what you drive, and what happened. Even if you are unsure what kind of help you need, we’ll help figure out the right next step.",
   ],
   [
     "We plan the job.",
-    "The right truck and equipment for your vehicle, and for the ground it’s sitting on.",
+    "We consider your vehicle, location, and situation to arrange the right service and equipment for the move.",
   ],
   [
-    "You get the price.",
-    "You hear what it costs before the winch moves. Then you decide.",
+    "You get the details.",
+    "Before any work begins, we confirm the service, explain what to expect, and answer your questions.",
   ],
   [
     "We get you moving.",
-    "A boost and you’re on your way, or a tow to the shop, home, or wherever it needs to go.",
+    "Whether it’s roadside assistance, towing, or transport, we handle the next step and help get your vehicle where it needs to go.",
   ],
 ];
 
@@ -82,11 +81,11 @@ function Roads() {
     <section className="ab-roads" id="where-we-work" aria-labelledby="ab-roads-title" ref={root}>
       <div className="ab-roads-copy">
         <span className="ab-kicker">03 / WHERE WE GO</span>
-        <h2 id="ab-roads-title">Where Highway 16 meets 97.</h2>
+        <h2 id="ab-roads-title">Where the roads connect.</h2>
         <p>
-          Prince George is home. Choose a road to see its place on the map and
-          what helps us find you there. Pins mark communities, not a guaranteed
-          service boundary.
+          Serving Prince George and surrounding routes with towing, roadside
+          assistance, and vehicle transport support. Select your area or highway
+          route to see where we can help.
         </p>
         <div className="ab-roads-tabs" role="tablist" aria-label="Roads out of Prince George">
           {areas.map((item, index) => (
@@ -116,7 +115,7 @@ function Roads() {
         >
           <span className="ab-kicker">LOCATION NOTE / {area.bearing}</span>
           <h3>{area.name}</h3>
-          <p>{area.detail}</p>
+          <p>{area.aboutDetail}</p>
         </div>
         <a className="ab-link" href="/#coverage">Explore service areas</a>
       </div>
@@ -144,7 +143,8 @@ const fieldScenes = [
     id: "heavy",
     short: "Heavy hauling",
     image: "/images/heavy-recovery.webp",
-    note: "The right plan for the load.",
+    note: "The right move for heavy loads",
+    text: "Moving larger vehicles and equipment takes more than a truck. We plan around the size, weight, access, and destination to arrange the right transport solution.",
   },
 ];
 
@@ -176,11 +176,11 @@ function FieldGallery() {
       <div className="ab-field-head">
         <div>
           <span className="ab-kicker">01 / ON THE GROUND</span>
-          <h2 id="ab-field-title">The work, up close.</h2>
+          <h2 id="ab-field-title">Every call has a story</h2>
         </div>
         <p>
-          Different calls need different equipment. Choose a scene to see how
-          we think about the job.
+          Every vehicle, location, and situation is different. See how we
+          approach each job with the right equipment and a clear plan.
         </p>
       </div>
       <div className="ab-field-cards" role="group" aria-label="Explore our work">
@@ -205,7 +205,7 @@ function FieldGallery() {
         <div className="ab-field-detail-main">
           <span className="ab-kicker">SELECTED / {scene.short.toUpperCase()}</span>
           <h3>{scene.note}</h3>
-          <p>{service.description}</p>
+          <p>{scene.text || service.description}</p>
         </div>
         <div className="ab-field-detail-side">
           <span className="ab-field-tags">{service.tags.join(" / ")}</span>
@@ -361,11 +361,11 @@ export default function AboutPage({ onHelp }) {
         </figure>
         <div className="ab-hero-copy">
           <span className="ab-kicker">PRINCE GEORGE TOWING / ABOUT US</span>
-          <h1 id="about-title" className="ab-title">The good part of a <em>bad day.</em></h1>
+          <h1 id="about-title" className="ab-title">The help you need <em>when things stop moving</em></h1>
           <p className="ab-lede">
-            Towing, recovery and roadside help in Prince George and out on the
-            highways. When the day goes sideways, we pick up, come out, and
-            help you find the next move.
+            Breakdowns happen. When they do, our team provides towing, recovery,
+            and roadside assistance designed to get you the right solution and
+            the next step forward.
           </p>
           <div className="ab-hero-actions">
             <a className="ab-hero-primary" href="#how-we-work">How we work <span aria-hidden="true">↓</span></a>
@@ -380,7 +380,7 @@ export default function AboutPage({ onHelp }) {
         <div className="ab-steps-head">
           <span className="ab-kicker">02 / THE CALL</span>
           <h2 id="ab-steps-title">What happens when you call</h2>
-          <p>From the first question to the last strap, you should know what is happening next.</p>
+          <p>From the first conversation to the final drop-off, we keep you informed about what happens next.</p>
         </div>
         <div className="ab-steps-track">
           <span className="ab-strap" aria-hidden="true"><span className="ab-strap-fill" /></span>
@@ -400,9 +400,9 @@ export default function AboutPage({ onHelp }) {
 
       <section className="ab-close" aria-labelledby="ab-close-title">
         <span className="ab-kicker">WHEN YOU NEED US</span>
-        <h2 id="ab-close-title" className="ab-close-title">Somebody’s always up.</h2>
+        <h2 id="ab-close-title" className="ab-close-title">Help is never far away</h2>
         <div className="ab-close-side">
-          <p>Day or night, tell us where you are and what happened. We’ll work out the next step with you.</p>
+          <p>Day or night, tell us where you are and what happened. We’ll help understand the situation and guide you toward the right next step.</p>
           <div className="ab-close-actions">
             <button className="action-button button-blue" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); onHelp(); }}>
               <span>Get help now</span><span className="button-icon"><Icon name="phone" /></span>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
-import { areas, business, faqs, services } from "./data";
+import { areas, business, contactFaqs, services } from "./data";
 import "./contact-page.css";
 
 const ZONE = "America/Vancouver";
@@ -9,50 +9,53 @@ const RING = 2 * Math.PI * 42;
 const checklist = [
   {
     title: "Where you are",
-    text: "A street, highway marker, intersection, or landmark. On a highway, your direction of travel helps too.",
-    note: "IF ANYONE IS HURT OR IN DANGER, CALL 911 FIRST.",
+    text: "Share your location, highway, intersection, or nearest landmark. If you are on the road, your direction of travel helps us find you faster.",
+    note: "IF YOU ARE IN DANGER, CALL 911 FIRST.",
   },
   {
     title: "What you drive",
-    text: "Make and model, plus whether it still rolls, steers, and brakes. For a larger vehicle, add its rough weight and size.",
-    note: "HAVE A SPARE? LET US KNOW.",
+    text: "Tell us the vehicle type, make, and model. For trucks, RVs, or equipment, share the approximate size and weight if available.",
+    note: "HAVE A SPARE OR EXTRA DETAILS? LET US KNOW.",
   },
   {
     title: "What happened",
-    text: "A flat, a dead battery, a lockout, or a vehicle off the road. It is fine if you are not sure yet.",
-    note: "NOT SURE IS A COMPLETE ANSWER.",
+    text: "Explain what stopped you, whether it is a breakdown, flat tire, accident, recovery situation, or another issue.",
+    note: "A ROUGH DESCRIPTION IS ENOUGH TO START.",
   },
   {
     title: "Where it needs to go",
-    text: "A shop, home, or somewhere you have not decided yet. We can talk through the options and cost before anything moves.",
-    note: "A PRICE BEFORE THE WINCH MOVES.",
+    text: "Tell us the destination, whether it is a repair shop, home, yard, or another location. We will discuss the right option before moving forward.",
+    note: "WE WILL CONFIRM THE NEXT STEP BEFORE WE MOVE.",
   },
 ];
 
 const serviceNotes = {
   towing: {
     label: "TOWING & RECOVERY",
-    heading: "Your vehicle needs a lift.",
-    copy: "Whether it broke down or left the road, tell us where it is and where you want it to go. We will talk through the equipment and cost with you.",
+    heading: "When your vehicle can’t move.",
+    copy: "From breakdowns to recovery situations, tell us where your vehicle is and where it needs to go. We’ll help arrange the right equipment and next step.",
     items: ["Pickup location", "Vehicle condition", "Destination"],
+    action: "Request service",
     image: "/images/recovery-detail.webp",
     imageAlt: "A recovery worker securing a vehicle to a flatbed tow truck",
     imageCaption: "FLATBED RECOVERY / THE DETAILS MATTER",
   },
   roadside: {
     label: "ROADSIDE ASSISTANCE",
-    heading: "A little help can go a long way.",
-    copy: "For a battery boost, tire change, lockout, or fuel delivery, tell us what happened and what you drive. A usable spare matters for a tire change.",
+    heading: "A little help. A big difference.",
+    copy: "A dead battery, flat tire, lockout, or empty tank can stop your day. Tell us what happened and where you are, and we’ll help figure out the right roadside solution.",
     items: ["Exact location", "Vehicle make & model", "What happened"],
+    action: "Request help",
     image: "/images/roadside-detail.webp",
     imageAlt: "A roadside worker connecting a battery booster to a vehicle",
     imageCaption: "ROADSIDE HELP / RIGHT WHERE YOU ARE",
   },
   heavy: {
     label: "HEAVY-DUTY HAULING",
-    heading: "Tell us about the load.",
-    copy: "For a truck, RV, or commercial vehicle, approximate weight and dimensions help us confirm the right transport option and availability.",
-    items: ["Vehicle or equipment", "Rough weight & size", "Route"],
+    heading: "The right plan for the load.",
+    copy: "Moving trucks, RVs, and commercial equipment requires careful planning. Share the vehicle details, approximate size, and destination so we can help arrange the right transport solution.",
+    items: ["Vehicle or equipment", "Approximate weight & size", "Route"],
+    action: "Request help",
     image: "/images/heavy-recovery.webp",
     imageAlt: "A heavy recovery truck towing a commercial vehicle",
     imageCaption: "HEAVY RECOVERY / EQUIPMENT FOR THE JOB",
@@ -172,12 +175,11 @@ export default function ContactPage({ onHelp }) {
         <div className="ct-hero-grid">
           <div className="ct-hero-copy">
             <span className="ct-eyebrow">TOWING & ROADSIDE HELP / PRINCE GEORGE, BC</span>
-            <h1 id="contact-title" className="ct-title">Need a tow? <br /><em>We're on it.</em></h1>
-            <p className="ct-lede">Broken down, off the road, or just stuck? Tell us where you are and what you drive. We will help you work out the next move.</p>
+            <h1 id="contact-title" className="ct-title">Need a tow? <br /><em>Let's get you moving.</em></h1>
+            <p className="ct-lede">Broken down, stuck roadside, or need a vehicle moved? Tell us where you are, what you drive, and what happened. We’ll help figure out the right service for your situation.</p>
             <div className="ct-hero-actions">
-              {hasNumber ? <a className="ct-primary" href={business.phoneHref}>Call for a tow <Icon name="phone" /></a> : <button className="ct-primary" type="button" onClick={() => onHelp("towing")}>Prepare a tow request <Icon name="arrow" /></button>}
-              {hasNumber && <button className="ct-text-link" type="button" onClick={() => onHelp("towing")}>Prepare details <Icon name="arrow" /></button>}
-              <a className="ct-text-link" href="#before-you-call">Choose a service <Icon name="down" /></a>
+              {hasNumber ? <a className="ct-primary" href={business.phoneHref}>Get in touch <Icon name="phone" /></a> : <button className="ct-primary" type="button" onClick={() => onHelp("towing")}>Get in touch <Icon name="arrow" /></button>}
+              <a className="ct-text-link" href="/services/">Explore our services <Icon name="arrow" /></a>
             </div>
             <span className="ct-hero-services">FLATBED TOWING <i /> ROADSIDE ASSISTANCE <i /> HEAVY RECOVERY</span>
           </div>
@@ -212,7 +214,7 @@ export default function ContactPage({ onHelp }) {
       <section className="ct-ready" id="before-you-call" aria-labelledby="ct-ready-title">
         <div className="ct-section-intro">
           <span className="ct-eyebrow">02 / BEFORE YOU CALL</span>
-          <div><h2 id="ct-ready-title">What kind of<br /><em>help?</em></h2><p>Choose what sounds closest to your situation. We will help you find the right next step.</p></div>
+          <div><h2 id="ct-ready-title">What kind of<br /><em>help do you need?</em></h2><p>Choose the situation that best matches what happened. We’ll help guide you toward the right service and next step.</p></div>
         </div>
 
         <div className="ct-selector">
@@ -246,12 +248,12 @@ export default function ContactPage({ onHelp }) {
               <h3>{selectedNote.heading}</h3>
               <p>{selectedNote.copy}</p>
               <div className="ct-panel-needs"><span>GOOD TO HAVE</span>{selectedNote.items.map((item) => <span key={item}><Icon name="check" />{item}</span>)}</div>
-              <button type="button" className="ct-panel-action" onClick={() => onHelp(selected)}>Prepare a {selected === "roadside" ? "roadside" : selected === "heavy" ? "heavy-duty" : "towing"} request <Icon name="arrow" /></button>
+              <button type="button" className="ct-panel-action" onClick={() => onHelp(selected)}>{selectedNote.action} <Icon name="arrow" /></button>
             </div>
           </div>
         </div>
 
-        <div className="ct-checklist-head"><h3>Four things to tell us.</h3><p>Rough answers are enough. You do not need to have every detail worked out.</p></div>
+        <div className="ct-checklist-head"><h3>Four things to tell us.</h3><p>A few details help us understand the situation and plan the right response. You do not need every answer before reaching out.</p></div>
         <ol className="ct-checklist">
           {checklist.map((item, index) => (
             <li className="ct-panel" key={item.title}>
@@ -265,7 +267,7 @@ export default function ContactPage({ onHelp }) {
       </section>
 
       <section className="ct-reach" id="where-we-go" aria-labelledby="ct-reach-title">
-        <div className="ct-reach-intro"><span className="ct-eyebrow">03 / WHERE WE GO</span><h2 id="ct-reach-title">In town.<br /><em>Out there.</em></h2><p>Coverage depends on your exact location and the equipment you need. Tell us the last thing you passed and we will confirm what is possible.</p><a href="/#coverage" className="ct-map-link">Open the service-area map <Icon name="arrow" /></a></div>
+        <div className="ct-reach-intro"><span className="ct-eyebrow">03 / WHERE WE GO</span><h2 id="ct-reach-title">In town.<br /><em>Out there.</em></h2><p>From city streets to the highways around Prince George, we help drivers find the right support when they need it. Tell us where you are, what happened, and what kind of vehicle needs help. We’ll confirm the next step.</p><a href="/#coverage" className="ct-map-link">Open the service-area map <Icon name="arrow" /></a></div>
         <ul className="ct-reach-list">
           {areas.map((area, index) => (
             <li className="ct-reach-row" key={area.id}>
@@ -281,7 +283,7 @@ export default function ContactPage({ onHelp }) {
       <section className="ct-faq" id="questions" aria-labelledby="ct-faq-title">
         <div className="ct-faq-intro"><span className="ct-eyebrow">04 / COMMON QUESTIONS</span><h2 id="ct-faq-title">The things<br />you might <em>ask.</em></h2><p>A few answers for the moment before you call.</p></div>
         <div className="ct-faq-list">
-          {faqs.map(([question, answer], index) => <FaqRow key={question} index={index} question={question} answer={answer} open={openFaq === index} onToggle={() => setOpenFaq(openFaq === index ? -1 : index)} />)}
+          {contactFaqs.map(([question, answer], index) => <FaqRow key={question} index={index} question={question} answer={answer} open={openFaq === index} onToggle={() => setOpenFaq(openFaq === index ? -1 : index)} />)}
         </div>
       </section>
 

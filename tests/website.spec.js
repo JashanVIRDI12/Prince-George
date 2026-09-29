@@ -24,10 +24,10 @@ test("loads original imagery and page sections without browser errors", async ({
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await expect(page).toHaveTitle(
-    "Prince George Towing — Bad day? Good backup.",
+    "Prince George Towing — Stuck on the road? Call us.",
   );
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "BAD DAY?",
+    "STUCK ON",
   );
   for (const image of await page.locator("img").all()) {
     await image.evaluate((el) =>
@@ -65,7 +65,9 @@ test("service details lead to a validated request, editable summary and download
     .click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading")).toHaveText("Roadside assistance");
-  await dialog.getByRole("button", { name: "Get help with this" }).click();
+  await dialog
+    .getByRole("button", { name: "Get help with roadside assistance" })
+    .click();
   await expect(
     dialog.getByRole("radio", { name: "Roadside assistance" }),
   ).toBeChecked();
@@ -126,14 +128,14 @@ test("coverage routes respond to pointer and keyboard selection", async ({
     page.getByRole("tab", { name: "Highway 97 North" }),
   ).toBeFocused();
   await expect(page.locator("#coverage").getByRole("tabpanel")).toContainText(
-    "Northern road, northern weather",
+    "Whether you are travelling through town or heading north",
   );
   await page.getByRole("tab", { name: "Highway 97 North" }).press("ArrowRight");
   await expect(
     page.getByRole("tab", { name: "Highway 97 South" }),
   ).toHaveAttribute("aria-selected", "true");
   await expect(page.locator("#coverage").getByRole("tabpanel")).toContainText(
-    "The Cariboo Highway",
+    "Travelling south on the Cariboo Highway",
   );
 });
 
@@ -141,12 +143,12 @@ test("field notes show answers and dialog closes with focus restored", async ({
   page,
 }) => {
   const question = page.getByRole("button", {
-    name: "What is this going to cost me?",
+    name: "How much does towing cost?",
   });
   await question.click();
   await expect(question).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#field-answer")).toContainText(
-    "It depends on the vehicle",
+    "The cost depends on factors such as your location",
   );
   const opener = page.locator(".header-help");
   await opener.click();
@@ -249,7 +251,7 @@ test("animated entrance and section transitions keep controls usable", async ({
   await page.getByRole("button", { name: "Close dialog" }).click();
   await page.getByRole("tab", { name: /Get moving again/ }).click();
   await expect(page.locator("#process-panel")).toContainText(
-    "The right solution for your vehicle.",
+    "The right solution for your vehicle",
   );
   await expect
     .poll(() =>
@@ -298,7 +300,7 @@ test("field-note search has useful answers and an honest empty state", async ({
     .fill("cost");
   await expect(page.locator(".notes-questions button")).toHaveCount(1);
   await expect(page.locator("#field-answer")).toContainText(
-    "What is this going to cost me?",
+    "How much does towing cost?",
   );
   await page
     .getByRole("searchbox", { name: "Search roadside questions" })
@@ -334,16 +336,18 @@ test("service process shows useful checklists and supports keyboard navigation",
   });
   const panel = page.locator("#process-panel");
   await tabs.getByRole("tab", { name: /Tell us what happened/ }).click();
-  await expect(panel).toContainText("Your location and a callback number");
+  await expect(panel).toContainText("Your location and callback number");
   await tabs
     .getByRole("tab", { name: /Tell us what happened/ })
     .press("ArrowRight");
   await expect(
     tabs.getByRole("tab", { name: /Confirm the plan/ }),
   ).toBeFocused();
-  await expect(panel).toContainText("Pricing and any additional charges");
+  await expect(panel).toContainText(
+    "Pricing and any additional details before starting",
+  );
   await tabs.getByRole("tab", { name: /Confirm the plan/ }).press("End");
-  await expect(panel).toContainText("Delivery to the agreed destination");
+  await expect(panel).toContainText("Transport to your chosen destination");
   await tabs.getByRole("tab", { name: /Get moving again/ }).press("Home");
   await expect(
     tabs.getByRole("tab", { name: /Tell us what happened/ }),

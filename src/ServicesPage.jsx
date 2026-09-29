@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { faqs, business } from "./data";
+import { serviceFaqs, business } from "./data";
 import { serviceDetails } from "./serviceContent";
 import { Icon } from "./icons";
 import { RecoveryWalkthrough } from "./ServiceMotion";
@@ -17,28 +17,32 @@ const situations = [
     service: "roadside",
     title: "Start with roadside assistance.",
     description:
-      "Tell us what happens when you try to start your vehicle. We’ll help confirm whether a battery boost or a tow is the appropriate next step.",
+      "Tell us what happened and where you are. We’ll help you understand the issue and determine whether a roadside solution or towing support is the right next step.",
+    action: "Get roadside help",
   },
   {
     label: "Flat tire, lockout, or fuel",
     service: "roadside",
-    title: "Help at the roadside.",
+    title: "Help at roadside.",
     description:
-      "Tell us the problem, your location, and your vehicle’s make and model. Mention a usable spare for a tire change or the fuel type for a delivery.",
+      "Tell us what happened, your location, and your vehicle details. Whether it’s a flat tire, locked keys, or running low on fuel, we’ll help determine the right roadside support for your situation.",
+    action: "Get roadside help",
   },
   {
     label: "I need a vehicle moved",
     service: "towing",
     title: "Arrange a tow or recovery.",
     description:
-      "Share the pickup location, destination, and vehicle condition. We’ll discuss the equipment and service needed to move it.",
+      "Share your pickup location, destination, and vehicle condition. We’ll help determine the right equipment and towing solution to safely move your vehicle.",
+    action: "Get towing help",
   },
   {
     label: "It’s a truck, RV, or equipment",
     service: "heavy",
     title: "Plan a heavy-duty move.",
     description:
-      "Have the approximate dimensions and weight ready. We’ll confirm the right equipment and availability for your vehicle or load.",
+      "Larger vehicles and equipment require the right approach. Share your vehicle details, approximate size, and destination, and we’ll help confirm the right equipment and transport solution.",
+    action: "Arrange heavy-duty help",
   },
 ];
 
@@ -190,7 +194,7 @@ function ServiceFinder({ onHelp }) {
             <p>{situation.description}</p>
             <div className="svc-match-actions">
               <ServiceAction onClick={() => onHelp(service.id)}>
-                {service.action}
+                {situation.action}
               </ServiceAction>
               <a href={service.path} className="svc-text-link">
                 See service details <Icon name="right" />
@@ -340,11 +344,11 @@ export default function ServicesPage({ onHelp }) {
           </span>
           <h1 id="services-title">
             Towing &<br />
-            <span>roadside help.</span>
+            <span>roadside solutions.</span>
           </h1>
           <p>
-            From a battery boost to a heavy-duty haul. The right help for your
-            vehicle, wherever the road has left you.
+            Professional towing, roadside assistance, and vehicle transport
+            services across Prince George and surrounding areas.
           </p>
           <div className="svc-hero-actions">
             <ServiceAction
@@ -353,8 +357,8 @@ export default function ServicesPage({ onHelp }) {
             >
               Get help now
             </ServiceAction>
-            <a href="#service-finder" className="svc-hero-secondary">
-              Find my service <Icon name="down" />
+            <a href="#our-services" className="svc-hero-secondary">
+              Explore our services <Icon name="down" />
             </a>
           </div>
           <div className="svc-hero-note">
@@ -377,17 +381,17 @@ export default function ServicesPage({ onHelp }) {
         </div>
       </section>
 
-      <section className="svc-index" aria-labelledby="svc-index-title">
+      <section className="svc-index" id="our-services" aria-labelledby="svc-index-title">
         <div className="svc-index-heading svc-reveal">
           <div>
             <span className="svc-eyebrow">01 / CHOOSE YOUR RESPONSE</span>
             <h2 id="svc-index-title">
-              Built for the <em>moment.</em>
+              The right help for <em>every situation.</em>
             </h2>
           </div>
           <p>
-            Different calls take different equipment. Start with the service
-            that sounds like your situation.
+            Different situations need different solutions. Choose the service
+            that matches your vehicle, location, and the support you need.
           </p>
         </div>
         <div className="svc-index-grid">
@@ -517,7 +521,7 @@ export default function ServicesPage({ onHelp }) {
           </button>
         </div>
         <div className="svc-faq-list">
-          {[faqs[2], faqs[3], faqs[1], faqs[4]].map(([question, answer]) => (
+          {serviceFaqs.map(([question, answer]) => (
             <details key={question}>
               <summary>
                 {question}

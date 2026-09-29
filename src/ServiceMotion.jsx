@@ -111,13 +111,13 @@ export function RecoveryWalkthrough({ onHelp }) {
           <h2 id="recovery-walkthrough-title">
             From roadside.
             <br />
-            <span>To the right place.</span>
+            <span>To back on track.</span>
           </h2>
         </div>
         <p>
           Every situation is different.
           <br />
-          The next step should be clear.
+          The right support starts with understanding what you need.
         </p>
       </div>
       <div className="recovery-road-scene" aria-hidden="true">
