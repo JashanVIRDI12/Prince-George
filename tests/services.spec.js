@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+const TEL = "tel:+17782810200";
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/services/");
@@ -13,11 +15,9 @@ test("services page loads directly, survives reload, and connects to the homepag
 }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await expect(page).toHaveTitle(
-    "Towing & Roadside Services | Prince George Towing",
-  );
+  await expect(page).toHaveTitle("Towing Services | Prince George Towing");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Towing &roadside solutions.",
+    "Towing & recovery services",
   );
   await page.reload();
   await expect(page.locator(".services-page")).toBeVisible();
@@ -30,10 +30,11 @@ test("services page loads directly, survives reload, and connects to the homepag
     );
   expect(missingTargets).toEqual([]);
   await page
+    .locator(".site-header")
     .getByRole("link", { name: "Prince George Towing, home", exact: true })
     .click();
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "STUCK ON",
+    "Towing and heavy recovery",
   );
   if (isMobile) {
     await page.getByRole("button", { name: "Open navigation" }).click();
@@ -49,10 +50,7 @@ test("services page loads directly, survives reload, and connects to the homepag
   }
   await expect(page).toHaveURL(/\/services\/$/);
   await expect(page.locator(".services-page")).toBeVisible();
-  await page
-    .locator(".footer-links")
-    .getByRole("link", { name: "About us" })
-    .click();
+  await page.locator(".footer-links").getByRole("link", { name: "About us" }).click();
   await expect(page).toHaveURL(/\/about\/$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "The help you need when things stop moving",
@@ -60,78 +58,55 @@ test("services page loads directly, survives reload, and connects to the homepag
   expect(errors).toEqual([]);
 });
 
-test("each service request opens with the right selection and restores focus", async ({
-  page,
-}) => {
-  for (const [id, action, service] of [
-    ["towing", "Get towing help", "Towing & recovery"],
-    ["roadside", "Get roadside help", "Roadside assistance"],
-    ["heavy", "Get heavy-duty help", "Heavy-duty hauling"],
+test("the strip and the chapters cover all five services", async ({ page }) => {
+  const strip = page.getByRole("navigation", { name: "The five services" });
+  await expect(strip.getByRole("link")).toHaveCount(5);
+  for (const [id, title, action] of [
+    ["towing", "Car towing", "Get towing help"],
+    ["heavy", "Heavy-duty towing", "Get heavy-duty help"],
+    ["equipment", "Heavy equipment transport", "Get equipment transport help"],
+    ["offloading", "Offloading", "Get offloading help"],
+    ["roadside", "Roadside assistance", "Get roadside help"],
   ]) {
-    const button = page
-      .locator(`#${id}`)
-      .getByRole("button", { name: action, exact: true });
-    await button.click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog.getByRole("radio", { name: service })).toBeChecked();
-    await dialog.getByRole("button", { name: "Close dialog" }).click();
-    await expect(button).toBeFocused();
+    const chapter = page.locator(`article#${id}`);
+    await expect(chapter.getByRole("heading", { level: 2 })).toHaveText(title);
+    await expect(chapter.locator(".chapter-handles li")).toHaveCount(4);
+    await expect(chapter.getByRole("link", { name: action, exact: true })).toHaveAttribute("href", TEL);
+    await expect(chapter.getByRole("link", { name: `${title} in detail` })).toHaveAttribute(
+      "href",
+      `/services/${id}/`,
+    );
   }
+  await strip.getByRole("link", { name: /Offloading/ }).click();
+  await expect(page.locator("#chapter-offloading")).toBeInViewport();
 });
 
-test("service finder supports keyboard choice, matching details, and requests", async ({
-  page,
-}) => {
-  await page.getByRole("link", { name: "Explore our services" }).click();
-  await expect(page.locator("#our-services")).toBeInViewport();
-  await page.locator("#service-finder").scrollIntoViewIfNeeded();
-  const tabs = page.getByRole("tablist", {
-    name: "Choose your vehicle situation",
-  });
-  const first = tabs.getByRole("tab", { name: "My vehicle won’t start" });
-  await first.click();
-  await first.press("End");
-  const last = tabs.getByRole("tab", {
-    name: "It’s a truck, RV, or equipment",
-  });
-  await expect(last).toBeFocused();
-  const panel = page.getByRole("tabpanel");
-  await expect(panel).toContainText("Plan a heavy-duty move.");
-  await panel.getByRole("button", { name: "Arrange heavy-duty help" }).click();
-  await expect(
-    page.getByRole("dialog").getByRole("radio", { name: "Heavy-duty hauling" }),
-  ).toBeChecked();
-  await page.getByRole("button", { name: "Close dialog" }).click();
-  await panel.getByRole("link", { name: "See service details" }).click();
-  await expect(page).toHaveURL(/\/services\/heavy\/$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Heavy-duty hauling.");
-  await page.goto("/services/");
-  await first.click();
-  await first.press("ArrowDown");
-  await expect(
-    tabs.getByRole("tab", { name: "Flat tire, lockout, or fuel" }),
-  ).toBeFocused();
-  await expect(panel).toContainText("Help at roadside.");
+test("the finder answers each situation and works by keyboard", async ({ page }) => {
+  const tabs = page.getByRole("tablist", { name: "Choose what happened" });
+  const panel = page.locator("#finder-panel");
+  await tabs.scrollIntoViewIfNeeded();
+  await expect(panel).toHaveAttribute("data-service", "roadside");
+  await tabs.getByRole("tab", { name: "It’s a bus, coach or semi" }).click();
+  await expect(panel).toHaveAttribute("data-service", "heavy");
+  await expect(panel.getByRole("heading", { level: 3 })).toHaveText("Heavy-duty towing");
+  await expect(panel.getByRole("link", { name: "Get heavy-duty help" })).toHaveAttribute("href", TEL);
+  await tabs.getByRole("tab", { name: "It’s a bus, coach or semi" }).press("ArrowDown");
+  await expect(tabs.getByRole("tab", { name: "A machine needs moving" })).toBeFocused();
+  await expect(panel).toHaveAttribute("data-service", "equipment");
+  await page.keyboard.press("End");
+  await expect(panel).toHaveAttribute("data-service", "offloading");
+  await page.keyboard.press("Home");
+  await expect(tabs.getByRole("tab", { name: "It won’t start" })).toBeFocused();
+  await panel.getByRole("link", { name: "Roadside assistance in detail" }).click();
+  await expect(page).toHaveURL(/\/services\/roadside\/$/);
 });
 
-test("preparation details and questions work with keyboard and pass accessibility checks", async ({
-  page,
-}) => {
-  const preparation = page.locator("#towing .svc-preparation summary");
-  await preparation.focus();
-  await preparation.press("Enter");
-  await expect(page.locator("#towing .svc-preparation")).toHaveAttribute(
-    "open",
-    "",
-  );
-  await expect(page.locator("#towing .svc-preparation p")).toContainText(
-    "destination information",
-  );
-  const question = page
-    .locator(".svc-faq-list summary")
-    .filter({ hasText: "What is this going to cost me?" });
-  await question.click();
-  await expect(page.locator(".svc-faq-list details[open] p")).toContainText(
+test("price factors and questions are readable and accessible", async ({ page }) => {
+  await expect(page.locator(".price-item")).toHaveCount(5);
+  await expect(page.locator(".price-head")).toContainText("before anything moves");
+  const cost = page.getByRole("button", { name: "What is this going to cost me?" });
+  await expect(cost).toHaveAttribute("aria-expanded", "true");
+  await expect(page.getByRole("region", { name: "What is this going to cost me?" })).toContainText(
     "The cost depends on the service required",
   );
   const results = await new AxeBuilder({ page })
@@ -140,155 +115,7 @@ test("preparation details and questions work with keyboard and pass accessibilit
   expect(results.violations).toEqual([]);
 });
 
-test("service capabilities expand with keyboard and preserve the requested service", async ({
-  page,
-}) => {
-  const capability = page
-    .locator("#towing .svc-capabilities details")
-    .filter({ hasText: "Flatbed transport" });
-  await capability.locator("summary").focus();
-  await capability.locator("summary").press("Enter");
-  await expect(capability).toHaveAttribute("open", "");
-  await expect(capability.locator("p")).toBeVisible();
-  await expect(capability.locator("p")).toContainText("secure transportation");
-  await capability.locator("summary").press("Enter");
-  await expect(capability).not.toHaveAttribute("open", "");
-});
-
-test("recovery walkthrough connects buttons, keyboard slider, illustration, and help", async ({
-  page,
-}) => {
-  const walkthrough = page.locator(".recovery-walkthrough");
-  const steps = page.getByRole("group", {
-    name: "Explore the recovery process",
-  });
-  const slider = page.getByRole("slider", {
-    name: "Recovery walkthrough step",
-  });
-  await steps.getByRole("button", { name: "Make a plan" }).click();
-  await expect(slider).toHaveValue("1");
-  await expect(walkthrough.locator(".recovery-step-copy")).toContainText(
-    "availability, and cost",
-  );
-  await slider.focus();
-  await slider.press("End");
-  await expect(slider).toHaveValue("2");
-  await expect(slider).toHaveAttribute("aria-valuetext", "Step 3: Get moving");
-  await expect(
-    steps.getByRole("button", { name: "Get moving" }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(
-    walkthrough.locator(".recovery-road-stop.is-reached"),
-  ).toHaveCount(3);
-  await expect(walkthrough.locator(".recovery-step-copy")).toContainText(
-    "agreed destination",
-  );
-  await slider.press("Home");
-  await expect(slider).toHaveValue("0");
-  await expect(
-    steps.getByRole("button", { name: "Tell us where" }),
-  ).toHaveAttribute("aria-pressed", "true");
-  const help = walkthrough.getByRole("button", {
-    name: "Let’s make your plan",
-  });
-  await help.click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: "Close dialog" }).click();
-  await expect(help).toBeFocused();
-});
-
-test("service photography follows scroll navigation and finder selection with motion", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.reload();
-  const nav = page.getByRole("navigation", { name: "Service categories" });
-  for (const id of ["heavy", "roadside", "towing"]) {
-    await nav.locator(`a[href="#${id}"]`).click();
-    await expect(page.locator(`#${id} .svc-detail-photo img`)).toBeVisible();
-    await expect(page.locator(`#svc-title-${id}`)).toBeInViewport();
-    await expect(nav.locator(`a[href="#${id}"]`)).toHaveAttribute(
-      "aria-current",
-      "location",
-    );
-  }
-  const finder = page.locator("#service-finder");
-  await finder
-    .getByRole("tab", { name: "It’s a truck, RV, or equipment" })
-    .click();
-  await expect(finder.getByRole("tabpanel")).toHaveAttribute(
-    "data-service",
-    "heavy",
-  );
-  await expect(finder.locator(".svc-finder-photo img")).toHaveAttribute(
-    "src",
-    "/images/heavy-recovery.webp",
-  );
-  await finder.getByRole("tab", { name: "I need a vehicle moved" }).click();
-  await expect(finder.getByRole("tabpanel")).toHaveAttribute(
-    "data-service",
-    "towing",
-  );
-  await expect(finder.locator(".svc-finder-photo img")).toHaveAttribute(
-    "src",
-    "/images/recovery-detail.webp",
-  );
-  await expect
-    .poll(() =>
-      finder
-        .locator(".svc-recommendation-copy")
-        .evaluate((el) => Number(getComputedStyle(el).opacity)),
-    )
-    .toBe(1);
-});
-
-test("photographic service index leads to each dedicated service page", async ({ page }) => {
-  const cards = page.locator(".svc-index-card");
-  await expect(cards).toHaveCount(3);
-  for (const [index, id] of ["towing", "roadside", "heavy"].entries()) {
-    await page.goto("/services/");
-    const card = page.locator(".svc-index-card").nth(index);
-    await expect(card).toHaveAttribute("href", `/services/${id}/`);
-    await expect(card.locator("img")).toHaveJSProperty("naturalWidth", 1536);
-    await card.click();
-    await expect(page).toHaveURL(new RegExp(`/services/${id}/$`));
-    await expect(page.locator(".service-detail-page h1")).toBeVisible();
-  }
-});
-
-test("animated details settle cleanly and the walkthrough truck reaches its destination", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await page.reload();
-  const detail = page.locator("#towing .svc-capabilities details").first();
-  await detail.locator("summary").click();
-  await expect(detail).toHaveAttribute("open", "");
-  await expect.poll(() => detail.evaluate((el) => el.style.height)).toBe("");
-  await detail.locator("summary").click();
-  await expect(detail).not.toHaveAttribute("open", "");
-  await expect.poll(() => detail.evaluate((el) => el.style.height)).toBe("");
-  await page
-    .getByRole("group", { name: "Explore the recovery process" })
-    .getByRole("button", { name: "Get moving" })
-    .click();
-  await expect
-    .poll(() =>
-      page.locator(".recovery-truck-position").evaluate((el) => el.style.left),
-    )
-    .toBe("100%");
-  await expect(page.locator(".recovery-step-copy")).toContainText(
-    "agreed destination",
-  );
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await detail.locator("summary").click();
-  await expect(detail).toHaveAttribute("open", "");
-  await expect(detail.locator("p")).toBeVisible();
-});
-
-test("service layouts fit mobile through desktop and photography loads", async ({
-  page,
-}) => {
+test("service layouts fit mobile through desktop and photography loads", async ({ page }) => {
   for (const width of [320, 390, 768, 1024, 1440, 1920]) {
     await page.setViewportSize({ width, height: 900 });
     await expect
@@ -304,35 +131,42 @@ test("service layouts fit mobile through desktop and photography loads", async (
   expect(
     await page
       .locator(".services-page img")
-      .evaluateAll((images) =>
-        images.every((image) => image.complete && image.naturalWidth > 0),
-      ),
+      .evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth > 0)),
   ).toBe(true);
 });
 
-test("direct service links clear the sticky navigation and work with motion enabled", async ({
-  page,
-}) => {
+test("with motion: the index follows the chapters and direct links land", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  // Arrive from elsewhere, as a link from another page would.
   await page.goto("/services/#heavy");
+  await page.reload();
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator("#svc-title-heavy")).toBeInViewport();
+  await expect(page.locator("#chapter-heavy")).toBeInViewport();
+  if ((page.viewportSize()?.width ?? 0) > 900) {
+    const index = page.getByRole("navigation", { name: "Services on this page" });
+    await expect(index.getByRole("link", { name: "Heavy-duty towing" })).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+    await index.getByRole("link", { name: "Roadside assistance" }).click();
+    await expect(page.locator("#chapter-roadside")).toBeInViewport();
+    await expect(index.getByRole("link", { name: "Roadside assistance" })).toHaveAttribute(
+      "aria-current",
+      "location",
+    );
+  }
+  const photo = page.locator("#heavy .chapter-photo");
+  await photo.scrollIntoViewIfNeeded();
+  await expect(photo.locator("img")).toBeVisible();
+  await page.locator("#finder").scrollIntoViewIfNeeded();
+  await page.getByRole("tab", { name: "A load needs to come off a truck" }).click();
+  await expect(page.locator("#finder-panel")).toHaveAttribute("data-service", "offloading");
   await expect
     .poll(() =>
-      page
-        .locator("#heavy .svc-detail-copy")
-        .evaluate((element) => Number(getComputedStyle(element).opacity)),
+      page.locator(".fx-copy h3").evaluate((el) => Number(getComputedStyle(el).opacity)),
     )
     .toBe(1);
-  const heading = await page.locator("#svc-title-heavy").boundingBox();
-  const navigation = await page.locator(".svc-jump-nav").boundingBox();
-  expect(heading.y).toBeGreaterThanOrEqual(navigation.y + navigation.height);
-  await page
-    .locator("#heavy")
-    .getByRole("button", { name: "Get heavy-duty help" })
-    .click();
-  await expect(page.getByRole("dialog")).toBeVisible();
   expect(errors).toEqual([]);
 });

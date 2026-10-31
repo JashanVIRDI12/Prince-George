@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "./icons";
 import { areas, business, contactFaqs, services } from "./data";
+import { heroImages } from "./heroImages";
+import { additionalServices } from "./additionalServices";
 import "./contact-page.css";
 
 const ZONE = "America/Vancouver";
@@ -14,7 +16,7 @@ const checklist = [
   },
   {
     title: "What you drive",
-    text: "Tell us the vehicle type, make, and model. For trucks, RVs, or equipment, share the approximate size and weight if available.",
+    text: "Tell us the vehicle type, make, and model. For buses, semi trucks, RVs, or equipment, share the approximate size, weight, and load if available.",
     note: "HAVE A SPARE OR EXTRA DETAILS? LET US KNOW.",
   },
   {
@@ -31,14 +33,14 @@ const checklist = [
 
 const serviceNotes = {
   towing: {
-    label: "TOWING & RECOVERY",
+    label: "CARS, SUVS, PICKUPS & VANS",
     heading: "When your vehicle can’t move.",
-    copy: "From breakdowns to recovery situations, tell us where your vehicle is and where it needs to go. We’ll help arrange the right equipment and next step.",
+    copy: "From a car that won’t start to a pickup off the road, tell us where your vehicle is and where it needs to go. We’ll help arrange the right equipment and next step.",
     items: ["Pickup location", "Vehicle condition", "Destination"],
     action: "Request service",
-    image: "/images/recovery-detail.webp",
-    imageAlt: "A recovery worker securing a vehicle to a flatbed tow truck",
-    imageCaption: "FLATBED RECOVERY / THE DETAILS MATTER",
+    image: "/images/fleet-heavy-equipment.webp",
+    imageAlt: "Prince George Towing’s heavy recovery wrecker and lifting equipment",
+    imageCaption: "VEHICLE RECOVERY / THE DETAILS MATTER",
   },
   roadside: {
     label: "ROADSIDE ASSISTANCE",
@@ -46,20 +48,30 @@ const serviceNotes = {
     copy: "A dead battery, flat tire, lockout, or empty tank can stop your day. Tell us what happened and where you are, and we’ll help figure out the right roadside solution.",
     items: ["Exact location", "Vehicle make & model", "What happened"],
     action: "Request help",
-    image: "/images/roadside-detail.webp",
-    imageAlt: "A roadside worker connecting a battery booster to a vehicle",
-    imageCaption: "ROADSIDE HELP / RIGHT WHERE YOU ARE",
+    image: "/images/fleet-roadside.webp",
+    imageAlt: "A roadside technician beside Prince George Towing’s white and burgundy recovery truck",
+    imageCaption: "ROADSIDE HELP",
   },
   heavy: {
-    label: "HEAVY-DUTY HAULING",
+    label: "BUSES, TRUCKS & EQUIPMENT",
     heading: "The right plan for the load.",
-    copy: "Moving trucks, RVs, and commercial equipment requires careful planning. Share the vehicle details, approximate size, and destination so we can help arrange the right transport solution.",
+    copy: "A disabled bus or semi truck, or equipment that needs moving, calls for the right transport plan. Share the vehicle or equipment type, approximate weight, load details, and destination so we can prepare the right response.",
     items: ["Vehicle or equipment", "Approximate weight & size", "Route"],
     action: "Request help",
-    image: "/images/heavy-recovery.webp",
-    imageAlt: "A heavy recovery truck towing a commercial vehicle",
-    imageCaption: "HEAVY RECOVERY / EQUIPMENT FOR THE JOB",
+    image: "/images/fleet-coach.webp",
+    imageAlt: "Prince George Towing’s white and burgundy recovery truck towing a passenger coach",
+    imageCaption: "BUS & COACH TOWING",
   },
+  ...Object.fromEntries(additionalServices.map((service) => [service.id, {
+    label: service.category,
+    heading: service.fieldHeading,
+    copy: service.description,
+    items: service.checklist,
+    action: service.action,
+    image: service.image,
+    imageAlt: service.alt,
+    imageCaption: service.imageLabel,
+  }])),
 };
 
 function localTime(date) {
@@ -145,11 +157,10 @@ function FaqRow({ index, question, answer, open, onToggle }) {
   );
 }
 
-export default function ContactPage({ onHelp }) {
-  const [selected, setSelected] = useState("towing");
+export default function ContactPage() {
+  const [selected, setSelected] = useState("heavy");
   const [openFaq, setOpenFaq] = useState(0);
   const tabs = useRef([]);
-  const hasNumber = Boolean(business.phone);
   const selectedNote = serviceNotes[selected];
 
   const onTabKeyDown = (event, index) => {
@@ -176,16 +187,20 @@ export default function ContactPage({ onHelp }) {
           <div className="ct-hero-copy">
             <span className="ct-eyebrow">TOWING & ROADSIDE HELP / PRINCE GEORGE, BC</span>
             <h1 id="contact-title" className="ct-title">Need a tow? <br /><em>Let's get you moving.</em></h1>
-            <p className="ct-lede">Broken down, stuck roadside, or need a vehicle moved? Tell us where you are, what you drive, and what happened. We’ll help figure out the right service for your situation.</p>
+            <p className="ct-lede">Need car towing, heavy-duty recovery, heavy equipment moved, or a truck offloaded? Tell us where you are and what needs moving. We’ll help figure out the right service for your situation.</p>
+            <a className="ct-hero-number" href={business.phoneHref}>
+              <span>CALL DISPATCH, 24/7</span>
+              <strong><Icon name="phone" />{business.phone}</strong>
+            </a>
             <div className="ct-hero-actions">
-              {hasNumber ? <a className="ct-primary" href={business.phoneHref}>Get in touch <Icon name="phone" /></a> : <button className="ct-primary" type="button" onClick={() => onHelp("towing")}>Get in touch <Icon name="arrow" /></button>}
+              <a className="ct-primary" href={business.phoneHref}>Get in touch <Icon name="phone" /></a>
               <a className="ct-text-link" href="/services/">Explore our services <Icon name="arrow" /></a>
             </div>
-            <span className="ct-hero-services">FLATBED TOWING <i /> ROADSIDE ASSISTANCE <i /> HEAVY RECOVERY</span>
+            <span className="ct-hero-services">CARS <i /> HEAVY DUTY <i /> EQUIPMENT <i /> OFFLOADING</span>
           </div>
           <figure className="ct-hero-media">
-            <img src="/images/northern-road-recovery.webp" alt="A tow truck carrying an SUV on a northern road" width="1536" height="1024" fetchPriority="high" />
-            <figcaption><span>01 / TOWING & RECOVERY</span><span>READY FOR THE ROADS BEYOND TOWN</span></figcaption>
+            <img {...heroImages.contact} alt="Prince George Towing’s white and burgundy heavy-duty recovery truck" width="1536" height="1024" fetchPriority="high" />
+            <figcaption><span>CAR TO HEAVY-DUTY TOWING</span><span>READY FOR THE ROADS BEYOND TOWN</span></figcaption>
           </figure>
         </div>
         <aside className="ct-dispatch" aria-label="Dispatch contact">
@@ -194,17 +209,10 @@ export default function ContactPage({ onHelp }) {
             <span className="ct-dispatch-live"><i aria-hidden="true" />24/7. EVERY DAY.</span>
           </div>
           <div className="ct-dispatch-main">
-            {hasNumber ? (
-              <a className="ct-number-link" href={business.phoneHref}>
-                <span className="ct-number-face">{business.phone}</span>
-                <span className="ct-number-mark"><Icon name="phone" /></span>
-              </a>
-            ) : (
-              <div className="ct-number-empty">
-                <span className="ct-number-face">Number pending</span>
-                <p className="ct-preview-notice">This is a website preview. The dispatch number has not been configured yet.</p>
-              </div>
-            )}
+            <a className="ct-number-link" href={business.phoneHref}>
+              <span className="ct-number-face">{business.phone}</span>
+              <span className="ct-number-mark"><Icon name="phone" /></span>
+            </a>
           </div>
           <div className="ct-dispatch-bottom"><LocalClock /></div>
         </aside>
@@ -248,7 +256,7 @@ export default function ContactPage({ onHelp }) {
               <h3>{selectedNote.heading}</h3>
               <p>{selectedNote.copy}</p>
               <div className="ct-panel-needs"><span>GOOD TO HAVE</span>{selectedNote.items.map((item) => <span key={item}><Icon name="check" />{item}</span>)}</div>
-              <button type="button" className="ct-panel-action" onClick={() => onHelp(selected)}>{selectedNote.action} <Icon name="arrow" /></button>
+              <a className="ct-panel-action" href={business.phoneHref}>{selectedNote.action} <Icon name="phone" /></a>
             </div>
           </div>
         </div>
@@ -267,7 +275,7 @@ export default function ContactPage({ onHelp }) {
       </section>
 
       <section className="ct-reach" id="where-we-go" aria-labelledby="ct-reach-title">
-        <div className="ct-reach-intro"><span className="ct-eyebrow">03 / WHERE WE GO</span><h2 id="ct-reach-title">In town.<br /><em>Out there.</em></h2><p>From city streets to the highways around Prince George, we help drivers find the right support when they need it. Tell us where you are, what happened, and what kind of vehicle needs help. We’ll confirm the next step.</p><a href="/#coverage" className="ct-map-link">Open the service-area map <Icon name="arrow" /></a></div>
+        <div className="ct-reach-intro"><span className="ct-eyebrow">03 / WHERE WE GO</span><h2 id="ct-reach-title">In town.<br /><em>Out there.</em></h2><p>From city streets to the highways around Prince George, we help drivers find the right support when they need it. Tell us where you are, what happened, and what kind of vehicle needs help. We’ll confirm the next step.</p><a href="/#coverage" className="ct-map-link">Open the service-area map <Icon name="arrow" /></a><a href={business.mapsUrl} className="ct-map-link" target="_blank" rel="noopener">Find us on Google Maps <Icon name="arrow" /></a></div>
         <ul className="ct-reach-list">
           {areas.map((area, index) => (
             <li className="ct-reach-row" key={area.id}>
@@ -292,12 +300,12 @@ export default function ContactPage({ onHelp }) {
           <span className="ct-eyebrow">READY WHEN YOU ARE</span>
           <h2 id="ct-close-title">Let's get you<br /><em>moving.</em></h2>
           <div className="ct-close-actions">
-            {hasNumber ? <a className="ct-close-call" href={business.phoneHref}>Call {business.phone}<Icon name="phone" /></a> : <button className="ct-close-call" type="button" onClick={() => onHelp("towing")}>Prepare your details<Icon name="arrow" /></button>}
-            <p>{hasNumber ? "One call starts the conversation." : "The dispatch number is not configured in this preview. You can still prepare your details."}</p>
+            <a className="ct-close-call" href={business.phoneHref}>Call {business.phone}<Icon name="phone" /></a>
+            <p>One call starts the conversation.</p>
           </div>
         </div>
-        <figure className="ct-close-media"><img src="/images/about-road-crew.webp" alt="A recovery worker securing a vehicle on a flatbed tow truck" width="1536" height="1024" loading="lazy" /></figure>
-        <div className="ct-close-foot"><a href="/services/">Our services <Icon name="right" /></a><a href="/about/">About us <Icon name="right" /></a><a href="/#coverage">Service areas <Icon name="right" /></a></div>
+        <figure className="ct-close-media"><img src="/images/fleet-recovery-detail.webp" alt="An operator inspecting the rigging on Prince George Towing’s white and burgundy heavy recovery truck" width="1536" height="1024" loading="lazy" /></figure>
+        <div className="ct-close-foot"><a href="/services/">Our services <Icon name="right" /></a><a href="/about/">About us <Icon name="right" /></a><a href="/#coverage">Service areas <Icon name="right" /></a><a href={business.mapsUrl} target="_blank" rel="noopener">Google Maps <Icon name="right" /></a></div>
       </section>
     </div>
   );

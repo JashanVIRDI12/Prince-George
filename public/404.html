@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#042356" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <title>Page not found | Prince George Towing</title>
+    <style>
+      @font-face {
+        font-family: "Barlow Condensed";
+        font-weight: 800;
+        font-display: swap;
+        src: url("/fonts/barlow-condensed-800.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "DM Sans";
+        font-weight: 500;
+        font-display: swap;
+        src: url("/fonts/font-1.woff2") format("woff2");
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px 24px;
+        background: #f6f4eb;
+        color: #042356;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+      }
+      main {
+        width: 100%;
+        max-width: 620px;
+      }
+      img {
+        display: block;
+        width: 190px;
+        height: auto;
+      }
+      .label {
+        margin-top: 56px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        color: #a03400;
+      }
+      h1 {
+        margin-top: 14px;
+        font-family: "Barlow Condensed", "Arial Narrow", sans-serif;
+        font-size: clamp(56px, 13vw, 104px);
+        font-weight: 800;
+        line-height: 0.88;
+        letter-spacing: -1px;
+        text-transform: uppercase;
+      }
+      p {
+        max-width: 44ch;
+        margin-top: 22px;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 30px;
+      }
+      a {
+        color: inherit;
+      }
+      nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 52px;
+        padding: 0 22px;
+        border: 1px solid #042356;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      nav a:first-child {
+        background: #042356;
+        color: #f6f4eb;
+      }
+      nav a:hover,
+      nav a:focus-visible {
+        background: #fe5201;
+        border-color: #fe5201;
+        color: #042356;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a href="/" aria-label="Prince George Towing, home">
+        <img src="/images/brand-header.png" alt="Prince George Towing" width="1890" height="615" />
+      </a>
+      <div class="label">ERROR 404</div>
+      <h1>Wrong turn.</h1>
+      <p>
+        This page isn’t here. If you need a tow or roadside help, call dispatch
+        any time, or head back to the main site.
+      </p>
+      <nav aria-label="Where to go next">
+        <a href="tel:+17782810200">Call 778-281-0200</a>
+        <a href="/">Home</a>
+        <a href="/services/">Services</a>
+        <a href="/contact/">Contact</a>
+      </nav>
+    </main>
+  </body>
+</html>

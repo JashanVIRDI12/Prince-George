@@ -1,0 +1,68 @@
+/* Styles for circular-testimonials.jsx, moved out of the original styled-jsx
+   block so they work outside Next.js. */
+.testimonial-container {
+  width: 100%;
+  max-width: 64rem;
+}
+.testimonial-grid {
+  display: grid;
+  gap: 4rem;
+}
+.image-container {
+  position: relative;
+  width: 100%;
+  height: clamp(16rem, 42vw, 26rem);
+  perspective: 1000px;
+}
+.testimonial-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 1.5rem;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.2);
+}
+.testimonial-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.testimonial-content .name {
+  margin: 0 0 0.25rem;
+  font-weight: 700;
+}
+.testimonial-content .designation {
+  margin: 0 0 2rem;
+}
+.testimonial-content .quote {
+  margin: 0;
+  line-height: 1.6;
+}
+.arrow-buttons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.arrow-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.testimonial-count {
+  margin-left: 0.5rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+@media (min-width: 768px) {
+  .testimonial-grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}

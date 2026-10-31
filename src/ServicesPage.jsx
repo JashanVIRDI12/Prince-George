@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { serviceFaqs, business } from "./data";
 import { serviceDetails } from "./serviceContent";
+import { heroImages } from "./heroImages";
 import { Icon } from "./icons";
 import { RecoveryWalkthrough } from "./ServiceMotion";
 import "./services-page.css";
@@ -29,22 +30,36 @@ const situations = [
     action: "Get roadside help",
   },
   {
-    label: "I need a vehicle moved",
+    label: "My car, SUV, or pickup needs a tow",
     service: "towing",
     title: "Arrange a tow or recovery.",
     description:
-      "Share your pickup location, destination, and vehicle condition. We’ll help determine the right equipment and towing solution to safely move your vehicle.",
+      "Share your pickup location, destination, and vehicle condition. We’ll help determine the right equipment, from a wheel-lift to a flatbed, to safely move your vehicle.",
     action: "Get towing help",
   },
   {
-    label: "It’s a truck, RV, or equipment",
+    label: "It’s a bus, truck, or RV",
     service: "heavy",
     title: "Plan a heavy-duty move.",
     description:
-      "Larger vehicles and equipment require the right approach. Share your vehicle details, approximate size, and destination, and we’ll help confirm the right equipment and transport solution.",
+      "Buses, coaches, semi trucks, and equipment need a planned recovery. Share the vehicle type, weight, load, and destination so we can confirm the right equipment and access.",
     action: "Arrange heavy-duty help",
   },
-];
+  {
+    label: "I need heavy equipment moved",
+    service: "equipment",
+    title: "Plan the equipment move.",
+    description: "Share the machine type, weight, dimensions, condition, pickup access, and destination so we can discuss transport and recovery arrangements.",
+    action: "Get equipment transport help",
+  },
+  {
+    label: "I need a truck or trailer offloaded",
+    service: "offloading",
+    title: "Plan the offloading setup.",
+    description: "Tell us about the load, lifting points, truck or trailer, delivery timing, and site access so we can confirm suitable offloading arrangements.",
+    action: "Get offloading help",
+  },
+].sort((a, b) => Number(b.service === "heavy") - Number(a.service === "heavy"));
 
 function ServiceAction({ children, onClick, className = "", href }) {
   const Tag = href ? "a" : "button";
@@ -63,7 +78,7 @@ function ServiceAction({ children, onClick, className = "", href }) {
   );
 }
 
-function ServiceFinder({ onHelp }) {
+function ServiceFinder() {
   const [selected, setSelected] = useState(0);
   const root = useRef(null);
   const initialized = useRef(false);
@@ -182,7 +197,7 @@ function ServiceFinder({ onHelp }) {
               loading="lazy"
             />
             <span className="svc-finder-photo-label">
-              A GOOD PLACE TO START <Icon name="arrow" />
+              {service.id === "heavy" ? "BUS & COACH TOWING" : "A GOOD PLACE TO START"} <Icon name="arrow" />
             </span>
           </div>
           <div className="svc-recommendation-copy">
@@ -193,7 +208,7 @@ function ServiceFinder({ onHelp }) {
             <h3>{situation.title}</h3>
             <p>{situation.description}</p>
             <div className="svc-match-actions">
-              <ServiceAction onClick={() => onHelp(service.id)}>
+              <ServiceAction href={business.phoneHref}>
                 {situation.action}
               </ServiceAction>
               <a href={service.path} className="svc-text-link">
@@ -207,9 +222,9 @@ function ServiceFinder({ onHelp }) {
   );
 }
 
-export default function ServicesPage({ onHelp }) {
+export default function ServicesPage() {
   const root = useRef(null);
-  const [activeSection, setActiveSection] = useState("towing");
+  const [activeSection, setActiveSection] = useState("heavy");
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -343,17 +358,19 @@ export default function ServicesPage({ onHelp }) {
             <span /> PRINCE GEORGE TOWING
           </span>
           <h1 id="services-title">
-            Towing &<br />
-            <span>roadside solutions.</span>
+            Cars, heavy duty,{" "}
+            <br />
+            <span>equipment &amp; offloading.</span>
           </h1>
           <p>
-            Professional towing, roadside assistance, and vehicle transport
-            services across Prince George and surrounding areas.
+            Car, SUV, and pickup towing, bus and coach towing, semi truck
+            recovery, heavy equipment transport, and offloading in Prince George and
+            surrounding areas, with roadside assistance when you need it.
           </p>
           <div className="svc-hero-actions">
             <ServiceAction
               className="svc-button-orange"
-              onClick={() => onHelp()}
+              href={business.phoneHref}
             >
               Get help now
             </ServiceAction>
@@ -361,6 +378,10 @@ export default function ServicesPage({ onHelp }) {
               Explore our services <Icon name="down" />
             </a>
           </div>
+          <nav className="svc-hero-service-links" aria-label="Equipment and offloading services">
+            <a href="#equipment">Heavy equipment <Icon name="down" /></a>
+            <a href="#offloading">Offloading services <Icon name="down" /></a>
+          </nav>
           <div className="svc-hero-note">
             <Icon name="pin" />
             <span>Prince George & surrounding highways</span>
@@ -368,14 +389,14 @@ export default function ServicesPage({ onHelp }) {
         </div>
         <div className="svc-hero-photo">
           <img
-            src="/images/services-roadside-hero.webp"
-            alt="A blue flatbed tow truck loading a passenger vehicle at a northern British Columbia roadside turnout"
+            {...heroImages.services}
+            alt="Prince George Towing’s white and burgundy heavy-duty recovery wrecker"
             width="1536"
             height="1024"
             fetchPriority="high"
           />
           <div className="svc-photo-caption">
-            <span>LOCAL ROADS. PRACTICAL HELP.</span>
+            <span>HEAVY RECOVERY. LOCAL EQUIPMENT.</span>
             <span>PG / BC</span>
           </div>
         </div>
@@ -478,7 +499,7 @@ export default function ServicesPage({ onHelp }) {
                   <p>{service.prepare}</p>
                 </details>
                 <div className="svc-detail-actions">
-                  <ServiceAction onClick={() => onHelp(service.id)}>
+                  <ServiceAction href={business.phoneHref}>
                     {service.action}
                   </ServiceAction>
                   <a href={service.path} className="svc-text-link svc-detail-more">Explore {service.title} <Icon name="arrow" /></a>
@@ -489,9 +510,9 @@ export default function ServicesPage({ onHelp }) {
         </div>
       </div>
 
-      <RecoveryWalkthrough onHelp={onHelp} />
+      <RecoveryWalkthrough />
 
-      <ServiceFinder onHelp={onHelp} />
+      <ServiceFinder />
 
       <section
         className="svc-questions"
@@ -510,15 +531,9 @@ export default function ServicesPage({ onHelp }) {
             <br />
             Tell us about your situation.
           </p>
-          <button
-            className="svc-text-link"
-            onClick={(event) => {
-              event.currentTarget.focus();
-              onHelp();
-            }}
-          >
+          <a className="svc-text-link" href={business.phoneHref}>
             Talk it through <Icon name="right" />
-          </button>
+          </a>
         </div>
         <div className="svc-faq-list">
           {serviceFaqs.map(([question, answer]) => (
@@ -546,23 +561,17 @@ export default function ServicesPage({ onHelp }) {
             next step together.
           </p>
           <div className="svc-contact-actions">
-            <ServiceAction onClick={() => onHelp()} className="svc-button-dark">
+            <ServiceAction href={business.phoneHref} className="svc-button-dark">
               Get help with your vehicle
             </ServiceAction>
-            {business.phone ? (
-              <a className="svc-text-link" href={business.phoneHref}>
-                <Icon name="phone" />
-                {business.phone}
-              </a>
-            ) : (
-              <a className="svc-text-link" href="/#coverage">
-                Check our service areas <Icon name="right" />
-              </a>
-            )}
+            <a className="svc-text-link" href={business.phoneHref}>
+              <Icon name="phone" />
+              {business.phone}
+            </a>
           </div>
         </div>
         <div className="svc-contact-photo">
-          <img src="/images/northern-road-recovery.webp" alt="Blue flatbed tow truck on a northern British Columbia highway" width="1536" height="1024" loading="lazy" />
+          <img src="/images/fleet-heavy-equipment.webp" alt="Prince George Towing’s heavy-duty recovery wrecker" width="1600" height="1200" loading="lazy" />
           <span>READY WHEN THE ROAD CHANGES / PG, BC</span>
         </div>
       </section>

@@ -1,71 +1,73 @@
+import { additionalServices } from "./additionalServices";
+
+// Every help action on the site calls this number. VITE_DISPATCH_PHONE can
+// override it for a different deployment.
+const phone = import.meta.env.VITE_DISPATCH_PHONE?.trim() || "778-281-0200";
+const digits = phone.replace(/\D/g, "");
+
 export const business = {
   name: "Prince George Towing",
-  phone: import.meta.env.VITE_DISPATCH_PHONE?.trim() || "",
-  phoneHref: `tel:${(import.meta.env.VITE_DISPATCH_PHONE || "").replace(/[^+\d]/g, "")}`,
+  // As registered on the Google Business Profile.
+  legalName: "Prince George Towing & Recovery Inc.",
+  phone,
+  phoneHref: `tel:+${digits.length === 10 ? `1${digits}` : digits}`,
+  // The Google Business Profile listing. It is a service-area listing, so it
+  // shows no street address.
+  mapsUrl:
+    "https://www.google.com/maps/place/PRINCE+GEORGE+TOWING+%26+RECOVERY+INC./@54.1386854,-126.5578556,5z/data=!4m6!3m5!1s0x6d071a1b8a2ce27f:0xfc20f614a90feafe!8m2!3d54.1386854!4d-126.5578556!16s%2Fg%2F11zz8603cm",
 };
 
-// The three services keep their ids so the request flow and the service
-// dialog still resolve. `description` and `tags` feed the home page service
+// Services keep their ids so the service dialog and the service
+// pages still resolve. `description` and `tags` feed the home page service
 // showcase; `modal` is the copy the service dialog shows.
 export const services = [
   {
-    id: "roadside",
+    id: "heavy",
     number: "01",
-    title: "Roadside assistance",
-    icon: "battery",
+    title: "Heavy-duty towing",
+    icon: "heavy",
     description:
-      "A flat tire, dead battery, or locked keys can happen anytime. Our roadside assistance team provides quick solutions to help you get back on the road safely.",
-    tags: ["Battery boosts", "Tire changes", "Lockout & fuel delivery support"],
-    modal: {
-      title: "Roadside assistance",
-      description:
-        "Not every roadside problem needs a tow. From a dead battery to a flat tire or locked keys, we provide quick assistance to help you get back on the road safely.",
-      tags: ["Battery boosts", "Tire changes", "Lockouts & fuel delivery"],
-      detail:
-        "Tell us your location, vehicle details, and what went wrong. Our team will help determine the right roadside solution and get you the support you need.",
-      action: "Get help with roadside assistance",
-    },
+      "Heavy-duty towing and recovery for buses, coaches, semi trucks, and commercial fleets, plus equipment transport in Prince George. We plan around the vehicle or equipment’s weight, condition, and access to bring the right setup to the job.",
+    tags: ["Buses & coaches", "Semi trucks & commercial fleets", "Heavy recovery & equipment transport"],
   },
   {
     id: "towing",
     number: "02",
-    title: "Towing & recovery",
+    title: "Car towing",
     icon: "truck",
     description:
-      "A breakdown, accident, or unexpected vehicle issue can leave you stuck. Our towing and recovery services are designed to safely move your vehicle and provide dependable support when you need it.",
-    tags: ["Local & long-distance towing", "Flatbed vehicle transport", "Accident recovery"],
+      "Towing for cars, SUVs, pickups, and vans in Prince George. From a breakdown in town to a collision on the highway, we move your vehicle safely to the repair shop, home, or destination you choose.",
+    tags: ["Cars, SUVs, pickups & vans", "Local & long-distance towing", "Flatbed transport & accident recovery"],
     modal: {
-      title: "Towing & recovery",
+      title: "Car towing",
       description:
-        "When your vehicle cannot move, you need reliable support to handle the situation safely. From roadside breakdowns to accident recovery, we provide professional towing solutions across Prince George and surrounding areas.",
-      tags: ["Local & long-distance towing", "Flatbed vehicle transport", "Accident recovery"],
+        "A breakdown or collision can stop any vehicle without warning. We tow cars, SUVs, pickups, and vans in Prince George and surrounding areas, with flatbed transport for vehicles that need extra care.",
+      tags: ["Cars, SUVs, pickups & vans", "Local & long-distance towing", "Flatbed transport & accident recovery"],
       detail:
-        "Share your location, vehicle details, and where you need assistance. We’ll help arrange the right equipment, explain the process, and provide a clear solution before starting the job.",
+        "Tell us your location, vehicle make and model, its condition, and where it needs to go. We’ll confirm the right equipment and the next step before we move it.",
       action: "Get help with towing",
     },
   },
   {
-    id: "heavy",
+    id: "roadside",
     number: "03",
-    title: "Heavy-duty hauling",
-    icon: "heavy",
+    title: "Roadside assistance",
+    icon: "battery",
     description:
-      "When larger vehicles or equipment need transport, you need a team with the right capability and experience. We provide dependable hauling solutions for commercial vehicles, RVs, and specialized equipment.",
-    tags: ["Trucks & commercial vehicles", "RVs & motorhomes", "Equipment transport"],
+      "Battery trouble, a flat tire, locked keys, or an empty tank can interrupt any trip. Call with your vehicle details so we can confirm roadside support or arrange towing when needed.",
+    tags: ["Battery boosts", "Tire changes", "Lockouts & fuel delivery"],
+    modal: {
+      title: "Roadside assistance",
+      description:
+        "Not every breakdown needs a tow. We help with battery boosts, tire changes, lockouts, and fuel delivery, with assistance matched to the vehicle and roadside conditions.",
+      tags: ["Battery boosts", "Tire changes", "Lockouts & fuel delivery"],
+      detail:
+        "Share your location, vehicle make and model, and the problem. For a bus or commercial truck, let us know the vehicle size and requirements so we can confirm suitable assistance.",
+      action: "Get help with roadside assistance",
+    },
   },
+  ...additionalServices,
 ];
-
-// The first card in the home page service strip opens this dialog instead of
-// the general towing one.
-export const vehicleRecoveryModal = {
-  title: "Towing & vehicle recovery",
-  description:
-    "When your car breaks down, you need a team that can respond quickly and handle it safely. From breakdowns and flatbeds to accident recovery, we provide dependable towing solutions across Prince George and nearby areas.",
-  tags: ["Local & long-distance towing", "Flatbed vehicle transport", "Accident recovery support"],
-  detail:
-    "Whether your car, truck, or other vehicle needs a short-distance tow or transport to a repair facility, we’ll help coordinate the right solution with clear communication from start to finish.",
-  action: "Get help",
-};
 
 // Map points identify communities, not company offices or coverage boundaries.
 // Coordinates: BC Geographical Names / Natural Resources Canada.
@@ -79,14 +81,14 @@ export const areas = [
     route: "City and the roads right around it",
     bearing: "LOCAL",
     detail:
-      "From downtown streets to the edges of the city, we provide towing, recovery, and roadside support. Share your nearest intersection, landmark, or location so we can understand where you are.",
+      "From downtown streets to the edges of the city, we provide car towing, heavy-duty bus and truck recovery, equipment transport, and roadside support. Share your nearest intersection, landmark, or location so we can understand where you are.",
     aboutDetail:
       "From city streets to nearby highways, share your location using an address, intersection, or visible landmark so we can understand where you are.",
     home: {
       name: "Prince George & surrounding areas",
       route: "Reliable help across the city and nearby roads",
       detail:
-        "From downtown streets to highways around Prince George, our team provides towing and roadside assistance where you need it. Share your location, nearby landmark, or destination, and we’ll help confirm availability.",
+        "From downtown streets to highways around Prince George, our team helps with car towing, heavy-duty recovery, equipment transport, and roadside assistance. Share your location, nearby landmark, or destination, and we’ll help confirm availability.",
     },
     map: { center: [53.913056, -122.745278], zoom: 11, place: "Prince George" },
   },
@@ -156,8 +158,8 @@ export const faqs = [
     "Yes, we provide towing support for local trips and longer-distance vehicle transport based on your requirements.",
   ],
   [
-    "Can you tow trucks, RVs, and commercial vehicles?",
-    "We provide solutions for different vehicle types. Contact us with your vehicle details so we can confirm the right equipment for your needs.",
+    "What kinds of vehicles do you tow?",
+    "Everyday cars, SUVs, pickups, and vans, as well as buses, coaches, semi trucks, and commercial vehicles. For a heavy vehicle, share the vehicle type, approximate weight, condition, and location so we can confirm the right equipment.",
   ],
   [
     "How quickly can you reach my location?",
@@ -165,7 +167,7 @@ export const faqs = [
   ],
   [
     "What information should I provide when calling?",
-    "Share your location, vehicle make and model, what happened, and where you need the vehicle transported. This helps us arrange the right support.",
+    "Share your location, vehicle make and model, what happened, and the destination. For a bus, semi truck, or loaded commercial vehicle, also include approximate weight, dimensions, and whether it can roll or steer.",
   ],
 ];
 
@@ -183,8 +185,8 @@ export const serviceFaqs = [
     "Yes. Not every situation requires a tow. For issues like a dead battery, flat tire, lockout, or fuel delivery, we can provide roadside assistance when appropriate.",
   ],
   [
-    "Can you tow trucks, RVs, or commercial vehicles?",
-    "We provide support for larger vehicles and specialized transport needs. Share your vehicle details so we can confirm the right equipment and approach.",
+    "What kinds of vehicles can you tow?",
+    "Cars, SUVs, pickups, and vans, plus buses and coaches, semi trucks, commercial fleets, and RVs. For larger vehicles, share the size, weight, condition, and access details so we can plan the right response.",
   ],
   [
     "What information should I have ready when I call?",
@@ -210,8 +212,8 @@ export const contactFaqs = [
     "Yes, we assist drivers in Prince George and surrounding areas. Share your exact location and route, and we’ll confirm availability.",
   ],
   [
-    "Can you help with commercial vehicles, trucks, or RVs?",
-    "Yes. We handle a range of vehicles, including commercial vehicles, trucks, RVs, and heavier equipment. Let us know the vehicle type and situation so we can plan the right response.",
+    "What kinds of vehicles do you help with?",
+    "Everyday cars, SUVs, pickups, and vans, as well as buses, coaches, semi trucks, RVs, and commercial equipment. Let us know the vehicle type and situation so we can plan the right response.",
   ],
   [
     "What information should I have when I call?",

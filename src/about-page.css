@@ -56,7 +56,7 @@
 .ab-field-card img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .7s var(--ab-ease); }
 .ab-field-shade { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(3,19,45,.18),transparent 38%,rgba(3,19,45,.9)); }
 .ab-field-index { position: absolute; left: clamp(18px, 2vw, 32px); top: 20px; font-family: var(--ab-display); font-size: 22px; font-weight: 700; }
-.ab-field-card-title { position: absolute; bottom: 22px; left: clamp(18px, 2vw, 32px); right: 70px; font-family: var(--ab-display); font-size: clamp(28px, 2.6vw, 42px); font-weight: 800; line-height: .92; text-transform: uppercase; }
+.ab-field-card-title { position: absolute; bottom: 22px; left: clamp(18px, 2vw, 32px); right: 54px; font-family: var(--ab-display); font-size: clamp(20px, 1.9vw, 32px); font-weight: 800; line-height: .92; text-transform: uppercase; }
 .ab-field-card-icon { position: absolute; right: clamp(18px, 2vw, 32px); bottom: 22px; display: grid; place-items: center; width: 35px; height: 35px; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; font-size: 19px; transition: background .25s, color .25s; }
 .ab-field-card.is-active .ab-field-card-icon { background: var(--ab-orange); border-color: var(--ab-orange); color: var(--ab-ink); }
 .ab-field-detail { display: grid; grid-template-columns: minmax(0, 1fr) minmax(210px, .42fr); gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--ab-line); }
@@ -269,7 +269,7 @@
   .ab-field { padding-top: 86px; padding-bottom: 80px; }
   .ab-field h2 { font-size: clamp(58px, 13vw, 86px); }
   .ab-field-head p { font-size: 17px; }
-  .ab-field-cards { flex-direction: column; height: 570px; gap: 8px; }
+  .ab-field-cards { flex-direction: column; height: 760px; gap: 8px; }
   .ab-field-card { flex: 1 1 0; }
   .ab-field-card.is-active { flex: 2.2 1 0; }
   .ab-field-card img { object-position: center 50%; }

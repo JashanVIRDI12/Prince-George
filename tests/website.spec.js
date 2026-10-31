@@ -1,51 +1,41 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { readFile } from "node:fs/promises";
+
+const TEL = "tel:+17782810200";
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  // Keep UI tests deterministic and avoid repeated requests to the public tile service.
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.fulfill({
-      contentType: "image/png",
-      body: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6Z9sAAAAASUVORK5CYII=",
-        "base64",
-      ),
-    }),
-  );
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
 });
 
-test("loads original imagery and page sections without browser errors", async ({
+test("loads the hero, services and photography without browser errors", async ({
   page,
 }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await expect(page).toHaveTitle(
-    "Prince George Towing — Stuck on the road? Call us.",
+    "Car & Heavy-Duty Towing | Prince George Towing",
   );
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "STUCK ON",
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Towing and heavy recovery in Prince George, BC",
   );
-  for (const image of await page.locator("img").all()) {
-    await image.evaluate((el) =>
-      el.closest("section")?.scrollIntoView({ block: "center" }),
-    );
+  await expect(page.locator(".hero-window img")).toHaveAttribute(
+    "src",
+    /^\/images\/home\/hero\.webp\?v=/,
+  );
+  const cards = page.locator("#services .svc-card");
+  await expect(cards).toHaveCount(5);
+  for (const id of ["towing", "heavy", "equipment", "offloading", "roadside"])
+    await expect(page.locator(`#services a[href="/services/${id}/"]`)).toHaveCount(1);
+  // Every photo on the page loads once it is scrolled to.
+  const images = page.locator("main img:visible, footer img");
+  for (const image of await images.all()) {
+    await image.scrollIntoViewIfNeeded();
     await expect
       .poll(() => image.evaluate((el) => el.complete && el.naturalWidth > 0))
       .toBe(true);
   }
-  await expect
-    .poll(() =>
-      page
-        .locator("img")
-        .evaluateAll((images) =>
-          images.every((image) => image.complete && image.naturalWidth > 0),
-        ),
-    )
-    .toBe(true);
   const missingTargets = await page
     .locator('a[href^="#"]')
     .evaluateAll((links) =>
@@ -57,105 +47,154 @@ test("loads original imagery and page sections without browser errors", async ({
   expect(errors).toEqual([]);
 });
 
-test("service details lead to a validated request, editable summary and download", async ({
+test("every help action calls dispatch and the number is readable", async ({
   page,
 }) => {
-  await page
-    .getByRole("button", { name: "Explore Roadside assistance" })
-    .click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("heading")).toHaveText("Roadside assistance");
-  await dialog
-    .getByRole("button", { name: "Get help with roadside assistance" })
-    .click();
-  await expect(
-    dialog.getByRole("radio", { name: "Roadside assistance" }),
-  ).toBeChecked();
-  await dialog.getByRole("button", { name: "Prepare my request" }).click();
-  await expect(dialog.locator("form")).toBeVisible();
-  await dialog
-    .getByLabel("Your location")
-    .fill("Highway 16 near Prince George");
-  await dialog.getByLabel("Vehicle", { exact: false }).fill("2020 Toyota RAV4");
-  await dialog.getByLabel("Destination").fill("Prince George");
-  await dialog.getByLabel("Your name").fill("Alex");
-  await dialog.getByLabel("Phone number").fill("not-a-number");
-  expect(
-    await dialog
-      .getByLabel("Phone number")
-      .evaluate((input) => input.checkValidity()),
-  ).toBe(false);
-  await dialog.getByLabel("Phone number").fill("+1 (250) 555-0123");
-  expect(
-    await dialog
-      .getByLabel("Phone number")
-      .evaluate((input) => input.checkValidity()),
-  ).toBe(true);
-  await dialog.getByRole("button", { name: "Prepare my request" }).click();
-  await expect(dialog.getByRole("heading")).toContainText("ready.");
-  await expect(dialog.locator("dl")).toContainText(
-    "Highway 16 near Prince George",
-  );
-  await expect(dialog.locator("dl")).toContainText("Roadside assistance");
-  await expect(dialog).toContainText("your request has not been sent");
-  const downloadPromise = page.waitForEvent("download");
-  await dialog.getByRole("button", { name: "Save details" }).click();
-  const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe("prince-george-towing-request.txt");
-  expect(await readFile(await download.path(), "utf8")).toContain("Alex");
-  await dialog.getByRole("button", { name: "Edit my details" }).click();
-  await expect(dialog.getByLabel("Your name")).toHaveValue("Alex");
-  await dialog.getByRole("button", { name: "Close dialog" }).click();
-  await expect(dialog).toHaveCount(0);
+  const heroNumber = page.locator(".hero-number");
+  await expect(heroNumber).toHaveAttribute("href", TEL);
+  await expect(heroNumber).toHaveAccessibleName("Call 778-281-0200");
+  await expect(heroNumber).toBeVisible();
+  await expect(page.locator(".hero-cta")).toHaveAttribute("href", TEL);
+  await expect(page.locator(".header-call")).toHaveAttribute("href", TEL);
+  await expect(page.locator(".svc-call")).toHaveAttribute("href", TEL);
+  await expect(page.locator(".closing-number")).toHaveAttribute("href", TEL);
+  await expect(page.locator(".closing-number")).toHaveAccessibleName("Call 778-281-0200");
+  await expect(page.locator(".footer-call a")).toHaveText("778-281-0200");
+  const phoneLinks = await page
+    .locator('a[href^="tel:"]')
+    .evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+  expect(phoneLinks.length).toBeGreaterThanOrEqual(6);
+  expect(new Set(phoneLinks)).toEqual(new Set([TEL]));
+  await expect(page.locator("form")).toHaveCount(0);
 });
 
-test("coverage routes respond to pointer and keyboard selection", async ({
+test("hero offers a call and a way down to the services", async ({ page }) => {
+  await expect(page.locator(".hero-dispatch")).toContainText("Dispatch answers 24/7");
+  await expect(
+    page.locator(".hero-actions").getByRole("link", { name: "See what we move" }),
+  ).toHaveAttribute("href", "#services");
+  // Without motion the footage layer stays out of the way.
+  await expect(page.locator(".hero-film")).toBeHidden();
+});
+
+test("service cards link to their pages and the strip below calls dispatch", async ({
+  page,
+  isMobile,
+}) => {
+  const card = page.getByRole("link", { name: /Heavy-duty towing.*Buses, coaches/ });
+  await expect(card).toHaveAttribute("href", "/services/heavy/");
+  await expect(page.locator("main")).not.toContainText(/illustrative/i);
+  await expect(page.locator(".svc-call")).toContainText("Not sure which one?");
+  if (isMobile) {
+    // On phones the cards swipe sideways inside their own row.
+    const row = page.locator(".svc-grid");
+    expect(await row.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
+  }
+  await card.click();
+  await expect(page).toHaveURL(/\/services\/heavy\/$/);
+});
+
+test("the statement reads as one heading with its photos set aside", async ({
   page,
 }) => {
-  await page.locator(".coverage-map").scrollIntoViewIfNeeded();
-  await page
-    .getByRole("button", { name: "Show Highway 97 North coverage" })
-    .click();
-  await expect(
-    page.getByRole("tab", { name: "Highway 97 North" }),
-  ).toHaveAttribute("aria-selected", "true");
-  await page.getByRole("tab", { name: "Highway 16 West" }).click();
-  await expect(page.locator("#coverage").getByRole("tabpanel")).toContainText(
-    "Heading west on the Yellowhead",
+  const heading = page.getByRole("heading", { level: 2, name: /We tow cars/ });
+  await expect(heading).toContainText("coaches");
+  await expect(heading).toContainText("machinery");
+  await expect(heading.locator("img")).toHaveCount(3);
+  for (const image of await heading.locator("img").all())
+    await expect(image).toHaveAttribute("alt", "");
+});
+
+test("heavy-duty checklist and the three steps read in order", async ({ page }) => {
+  await expect(page.locator(".heavy-list li")).toHaveCount(5);
+  await expect(page.locator(".heavy-list li").first()).toContainText(
+    "Approximate weight and dimensions",
   );
-  await page.getByRole("tab", { name: "Highway 16 West" }).press("ArrowRight");
-  await expect(
-    page.getByRole("tab", { name: "Highway 97 North" }),
-  ).toBeFocused();
-  await expect(page.locator("#coverage").getByRole("tabpanel")).toContainText(
+  const steps = page.locator(".drive-step");
+  await expect(steps.locator("h3")).toHaveText([
+    "Tell us where you are",
+    "Agree on the plan",
+    "Get moving",
+  ]);
+  // Without motion every step is already lit.
+  await expect(page.locator(".drive-step[data-reached]")).toHaveCount(3);
+});
+
+test("reviews carousel moves by button and arrow key", async ({
+  page,
+}) => {
+  const carousel = page.getByRole("region", { name: "Customer reviews" });
+  await carousel.scrollIntoViewIfNeeded();
+  const quote = carousel.locator(".quote");
+  const first = await quote.textContent();
+  // Centre the arrows, clear of the phone call bar that slides in at the
+  // bottom of the screen.
+  const next = carousel.getByRole("button", { name: "Next review" });
+  await next.evaluate((el) => el.scrollIntoView({ block: "center" }));
+  await next.click();
+  await expect(quote).not.toHaveText(first);
+  await expect(carousel.locator(".testimonial-count")).toHaveText("2 / 3");
+  await carousel.getByRole("button", { name: "Next review" }).press("ArrowLeft");
+  await expect(carousel.locator(".testimonial-count")).toHaveText("1 / 3");
+  // Arrow keys outside the carousel are left alone.
+  await page.evaluate(() => document.activeElement.blur());
+  await page.keyboard.press("ArrowRight");
+  await expect(carousel.locator(".testimonial-count")).toHaveText("1 / 3");
+  // With reduced motion the carousel does not advance on its own.
+  await page.waitForTimeout(5600);
+  await expect(carousel.locator(".testimonial-count")).toHaveText("1 / 3");
+});
+
+test("service areas respond to pointer and keyboard selection", async ({
+  page,
+}) => {
+  const tabs = page.getByRole("tablist", { name: "Service areas" });
+  const panel = page.locator("#area-panel");
+  await tabs.scrollIntoViewIfNeeded();
+  await expect(tabs.getByRole("tab", { name: /Prince George/ })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(panel).toContainText("Prince George & surrounding areas");
+  await tabs.getByRole("tab", { name: /Highway 16 West/ }).click();
+  await expect(panel).toContainText("Heading west on the Yellowhead");
+  await expect(page.locator(".route-map")).toHaveAttribute("data-active", "west");
+  await tabs.getByRole("tab", { name: /Highway 16 West/ }).press("ArrowDown");
+  await expect(tabs.getByRole("tab", { name: /Highway 97 North/ })).toBeFocused();
+  await expect(panel).toContainText(
     "Whether you are travelling through town or heading north",
   );
-  await page.getByRole("tab", { name: "Highway 97 North" }).press("ArrowRight");
-  await expect(
-    page.getByRole("tab", { name: "Highway 97 South" }),
-  ).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator("#coverage").getByRole("tabpanel")).toContainText(
-    "Travelling south on the Cariboo Highway",
+  await page.keyboard.press("End");
+  await expect(tabs.getByRole("tab", { name: /Highway 97 South/ })).toBeFocused();
+  await expect(panel).toContainText("Travelling south on the Cariboo Highway");
+  await page.keyboard.press("ArrowRight");
+  await expect(tabs.getByRole("tab", { name: /Prince George/ })).toBeFocused();
+  // Clicking a road on the map selects it too.
+  await page.locator(".route-map .route").nth(2).locator(".road-hit").click({ force: true });
+  await expect(tabs.getByRole("tab", { name: /Highway 97 South/ })).toHaveAttribute(
+    "aria-selected",
+    "true",
   );
 });
 
-test("field notes show answers and dialog closes with focus restored", async ({
-  page,
-}) => {
-  const question = page.getByRole("button", {
-    name: "How much does towing cost?",
+test("questions open one at a time by pointer and keyboard", async ({ page }) => {
+  const first = page.getByRole("button", {
+    name: "What should I do while I wait for a tow truck?",
   });
-  await question.click();
-  await expect(question).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator("#field-answer")).toContainText(
-    "The cost depends on factors such as your location",
-  );
-  const opener = page.locator(".header-help");
-  await opener.click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
-  await expect(opener).toBeFocused();
+  const cost = page.getByRole("button", { name: "How much does towing cost?" });
+  await expect(first).toHaveAttribute("aria-expanded", "true");
+  await cost.click();
+  await expect(cost).toHaveAttribute("aria-expanded", "true");
+  await expect(first).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page.getByRole("region", { name: "How much does towing cost?" }),
+  ).toContainText("The cost depends on factors such as your location");
+  await cost.press("Enter");
+  await expect(cost).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page.getByRole("region", { name: "How much does towing cost?" }),
+  ).toHaveCount(0);
+  await expect(page.locator(".safety")).toContainText("call 911 first");
 });
 
 test("fits narrow and wide screens with a working mobile menu", async ({
@@ -166,268 +205,136 @@ test("fits narrow and wide screens with a working mobile menu", async ({
     await expect
       .poll(
         () =>
-          page.evaluate(
-            () => document.documentElement.scrollWidth <= innerWidth,
-          ),
-        { message: `Layout fits a ${width}px viewport` },
+          page.evaluate(() => {
+            const lines = [...document.querySelectorAll(".hero-line, .st-line, .closing-number")];
+            return (
+              document.documentElement.scrollWidth <= innerWidth &&
+              lines.every((line) => line.getBoundingClientRect().right <= innerWidth + 1)
+            );
+          }),
+        { message: `Layout and headlines fit a ${width}px viewport` },
       )
       .toBe(true);
-    await expect
-      .poll(() =>
-        page
-          .locator(".hero-title")
-          .evaluate((el) => el.getBoundingClientRect().right),
-      )
-      .toBeLessThanOrEqual(width);
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Open navigation" }).click();
-  await expect(
-    page.getByRole("navigation", { name: "Mobile navigation" }),
-  ).toBeVisible();
-  await page
-    .getByRole("navigation", { name: "Mobile navigation" })
-    .getByRole("link", { name: "About us" })
-    .click();
-  await expect(
-    page.getByRole("navigation", { name: "Mobile navigation" }),
-  ).toHaveCount(0);
+  const menu = page.getByRole("navigation", { name: "Mobile navigation" });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("link", { name: /Call 778-281-0200/ })).toHaveAttribute(
+    "href",
+    TEL,
+  );
+  await page.keyboard.press("Escape");
+  await expect(menu).toHaveCount(0);
+  await page.getByRole("button", { name: "Open navigation" }).click();
+  await menu.getByRole("link", { name: "About us" }).click();
+  await expect(menu).toHaveCount(0);
   await expect(page).toHaveURL(/\/about\/$/);
 });
 
-test("passes automated accessibility checks on page and request form", async ({
+test("phones get a call bar once the dispatch numbers scroll away", async ({
   page,
 }) => {
-  await page.evaluate(() => document.fonts.ready);
+  await page.setViewportSize({ width: 390, height: 844 });
+  const bar = page.locator(".call-bar");
+  await expect(bar).toHaveCount(0);
+  await page.locator(".heavy-list").scrollIntoViewIfNeeded();
+  await expect(bar).toBeVisible();
+  await expect(bar.getByRole("link")).toHaveAttribute("href", TEL);
+  await page.locator(".closing-number").scrollIntoViewIfNeeded();
+  await expect(bar).toHaveCount(0);
+});
+
+test("passes automated accessibility checks", async ({ page }) => {
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(results.violations).toEqual([]);
-  await page.locator(".header-help").click();
-  const modalResults = await new AxeBuilder({ page })
+  await page.locator("#faq").scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: "How much does towing cost?" }).click();
+  const open = await new AxeBuilder({ page })
+    .include("#faq")
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
-  expect(modalResults.violations).toEqual([]);
+  expect(open.violations).toEqual([]);
 });
 
-test("location permission adds usable coordinates to the request", async ({
-  page,
-  context,
-}) => {
-  await context.grantPermissions(["geolocation"]);
-  await context.setGeolocation({ latitude: 53.9171, longitude: -122.7497 });
-  await page.locator(".header-help").click();
-  await page.getByRole("button", { name: "Use my location" }).click();
-  await expect(
-    page.getByRole("dialog").getByLabel("Your location"),
-  ).toHaveValue("53.91710, -122.74970");
+test("road frames load only when motion is welcome", async ({ page }) => {
+  const frames = [];
+  page.on("request", (request) => {
+    if (request.url().includes("/images/road-sequence/")) frames.push(request.url());
+  });
+  await page.reload();
+  await expect(page.locator(".hero-film")).toBeHidden();
+  await page.waitForLoadState("networkidle");
+  expect(frames).toEqual([]);
+
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.reload();
+  await expect(page.locator(".hero")).toHaveClass(/is-live/);
+  await expect(page.locator(".hero-sequence")).toHaveAttribute("data-ready", "");
+  expect(frames[0]).toMatch(/\/road-sequence\/(960|1280)\/001\.webp$/);
 });
 
-test("animated entrance and section transitions keep controls usable", async ({
+test("with motion: the hero opens, the truck drives, the header steps aside", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await expect
-    .poll(() =>
-      page
-        .locator(".hero-bottom-content")
-        .evaluate((el) => Number(getComputedStyle(el).opacity)),
-    )
-    .toBe(1);
+  await expect(page.locator(".hero")).toHaveClass(/is-live/);
   await expect(page.locator(".hero-cta")).toBeVisible();
-  await page.locator(".service-lab").scrollIntoViewIfNeeded();
-  await expect
-    .poll(() =>
-      page
-        .locator(".lab-heading h2")
-        .evaluate((el) => Number(getComputedStyle(el).opacity)),
-    )
-    .toBe(1);
-  await page
-    .getByRole("button", { name: "Explore Roadside assistance" })
-    .click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: "Close dialog" }).click();
-  await page.getByRole("tab", { name: /Get moving again/ }).click();
-  await expect(page.locator("#process-panel")).toContainText(
-    "The right solution for your vehicle",
-  );
-  await expect
-    .poll(() =>
-      page
-        .locator(".process-detail-main")
-        .evaluate((el) => Number(getComputedStyle(el).opacity)),
-    )
-    .toBe(1);
-  await page.locator(".contact-heading").scrollIntoViewIfNeeded();
-  await expect
-    .poll(() =>
-      page
-        .locator(".contact-heading h2")
-        .evaluate((el) => Number(getComputedStyle(el).opacity)),
-    )
-    .toBe(1);
-});
+  await page.locator(".hero-cta").click({ trial: true });
+  const header = page.locator(".site-header");
 
-test("service showcase changes images, details, and keyboard selection", async ({
-  page,
-}) => {
-  const tabs = page.getByRole("tablist", { name: "Choose a recovery service" });
-  await tabs.getByRole("tab", { name: /Heavy-duty hauling/ }).click();
-  await expect(page.locator("#service-panel img")).toHaveAttribute(
-    "src",
-    "/images/heavy-recovery.webp",
-  );
+  // Scrolling through the pinned hero opens the window to the full screen,
+  // drives the truck, and ends on the logo, number and contact link.
+  const heroEnd = await page
+    .locator(".hero-stage")
+    .evaluate((el) => el.parentElement.getBoundingClientRect().bottom + scrollY - innerHeight);
+  await page.evaluate((y) => window.scrollTo(0, y - 40), heroEnd);
+  await expect
+    .poll(() => page.locator(".hero-film").evaluate((el) => getComputedStyle(el).clipPath))
+    .toMatch(/^inset\(0px\)$|^inset\(0px 0px 0px 0px\)$|^none$/);
+  await expect(page.locator(".hero-card-logo")).toBeVisible();
+  await expect(page.locator(".hero-card-number")).toBeVisible();
+  await expect(page.locator(".hero-card-number")).toHaveAttribute("href", TEL);
+  await expect(page.getByRole("link", { name: "Contact now" })).toHaveAttribute("href", "/contact/");
+  // Reading downward, the header steps out of the way.
+  await expect(header).toHaveAttribute("data-away", "");
+
+  // The steps light up as the truck reaches them.
+  if ((page.viewportSize()?.width ?? 0) > 900) {
+    const driveEnd = await page
+      .locator(".drive-stage")
+      .evaluate((el) => el.parentElement.getBoundingClientRect().bottom + scrollY - innerHeight);
+    await page.evaluate((y) => window.scrollTo(0, y), driveEnd);
+    await expect(page.locator(".drive-step[data-reached]")).toHaveCount(3);
+  }
+
+  // Scrolling back up brings the header back.
+  await page.evaluate(() => window.scrollBy(0, -300));
+  await expect(header).not.toHaveAttribute("data-away", "");
+
+  for (const id of ["#services-heading", "#heavy-heading", "#closing-heading"]) {
+    const heading = page.locator(id);
+    await heading.scrollIntoViewIfNeeded();
+    await expect(heading).toBeInViewport();
+    await expect
+      .poll(() =>
+        heading.evaluate((el) => {
+          const line = el.querySelector(".reveal-line") ?? el;
+          return Math.round(
+            line.getBoundingClientRect().top -
+              (line.parentElement ?? el).getBoundingClientRect().top,
+          );
+        }),
+      )
+      .toBeLessThanOrEqual(1);
+  }
+  await page.getByRole("button", { name: "How much does towing cost?" }).click();
   await expect(
-    page.getByRole("button", { name: "Explore Heavy-duty hauling" }),
+    page.getByRole("region", { name: "How much does towing cost?" }),
   ).toBeVisible();
-  await tabs.getByRole("tab", { name: /Heavy-duty hauling/ }).press("Home");
-  await expect(
-    tabs.getByRole("tab", { name: /Roadside assistance/ }),
-  ).toBeFocused();
-  await expect(page.locator("#service-panel img")).toHaveAttribute(
-    "src",
-    "/images/roadside-detail.webp",
-  );
-});
-
-test("field-note search has useful answers and an honest empty state", async ({
-  page,
-}) => {
-  await page
-    .getByRole("searchbox", { name: "Search roadside questions" })
-    .fill("cost");
-  await expect(page.locator(".notes-questions button")).toHaveCount(1);
-  await expect(page.locator("#field-answer")).toContainText(
-    "How much does towing cost?",
-  );
-  await page
-    .getByRole("searchbox", { name: "Search roadside questions" })
-    .fill("zzzz-no-match");
-  await expect(page.locator(".notes-empty")).toBeVisible();
-  await page
-    .locator("#field-answer")
-    .getByRole("button", { name: "Start a conversation" })
-    .click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-});
-
-test("contact desk carries the chosen service into the request", async ({
-  page,
-}) => {
-  await page
-    .getByRole("combobox", { name: "Choose help for your next move" })
-    .selectOption("heavy");
-  await page
-    .locator(".contact-desk")
-    .getByRole("button", { name: "Let’s get you moving" })
-    .click();
-  await expect(
-    page.getByRole("dialog").getByRole("radio", { name: "Heavy-duty hauling" }),
-  ).toBeChecked();
-});
-
-test("service process shows useful checklists and supports keyboard navigation", async ({
-  page,
-}) => {
-  const tabs = page.getByRole("tablist", {
-    name: "Steps to getting towing help",
-  });
-  const panel = page.locator("#process-panel");
-  await tabs.getByRole("tab", { name: /Tell us what happened/ }).click();
-  await expect(panel).toContainText("Your location and callback number");
-  await tabs
-    .getByRole("tab", { name: /Tell us what happened/ })
-    .press("ArrowRight");
-  await expect(
-    tabs.getByRole("tab", { name: /Confirm the plan/ }),
-  ).toBeFocused();
-  await expect(panel).toContainText(
-    "Pricing and any additional details before starting",
-  );
-  await tabs.getByRole("tab", { name: /Confirm the plan/ }).press("End");
-  await expect(panel).toContainText("Transport to your chosen destination");
-  await tabs.getByRole("tab", { name: /Get moving again/ }).press("Home");
-  await expect(
-    tabs.getByRole("tab", { name: /Tell us what happened/ }),
-  ).toBeFocused();
-  await panel.getByRole("button", { name: "Prepare your request" }).click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-});
-
-test("real map loads with attribution, area selection, zoom and reset controls", async ({
-  page,
-}) => {
-  await page.locator(".coverage-map").scrollIntoViewIfNeeded();
-  const map = page.getByRole("region", {
-    name: "Interactive map of Prince George and surrounding service areas",
-  });
-  await expect(map).toHaveAttribute("data-map-status", "ready");
-  await expect(
-    map.getByRole("link", { name: "OpenStreetMap", exact: true }),
-  ).toBeVisible();
-  const originalScale = await page
-    .locator(".leaflet-control-scale-line")
-    .textContent();
-  await map.getByRole("button", { name: "Zoom in" }).click();
-  await expect(page.locator(".leaflet-control-scale-line")).not.toHaveText(
-    originalScale,
-  );
-  await page
-    .getByRole("button", { name: "Recenter map on Prince George", exact: true })
-    .click();
-  await expect(page.locator(".leaflet-control-scale-line")).toHaveText(
-    originalScale,
-  );
-  await page.getByRole("tab", { name: "Highway 16 West" }).click();
-  await expect(map).toHaveAttribute("data-area", "west");
-  await expect(
-    page.getByRole("button", { name: "Show Highway 16 West coverage" }),
-  ).toBeInViewport();
-  await expect(
-    page.getByRole("link", { name: "Open larger map" }),
-  ).toHaveAttribute("href", /mlat=54\.017222&mlon=-124\.0075/);
-  const results = await new AxeBuilder({ page })
-    .include("#coverage")
-    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-    .analyze();
-  expect(results.violations).toEqual([]);
-});
-
-test("map tile failures keep area details available and retry restores the map", async ({
-  page,
-}) => {
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.abort(),
-  );
-  await page.locator(".coverage-map").scrollIntoViewIfNeeded();
-  await expect(page.locator(".map-load-error")).toBeVisible();
-  await page.getByRole("tab", { name: "Highway 97 South" }).click();
-  await expect(page.locator("#territory-panel")).toContainText(
-    "Toward Quesnel",
-  );
-  await expect(
-    page.getByRole("link", { name: "Open larger map" }),
-  ).toHaveAttribute("href", /mlat=52\.979722/);
-  await page.unroute("https://tile.openstreetmap.org/**");
-  await page.route("https://tile.openstreetmap.org/**", (route) =>
-    route.fulfill({
-      contentType: "image/png",
-      body: Buffer.from(
-        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6Z9sAAAAASUVORK5CYII=",
-        "base64",
-      ),
-    }),
-  );
-  await page.getByRole("button", { name: "Try again", exact: true }).click();
-  await expect(page.locator(".live-coverage-map")).toHaveAttribute(
-    "data-map-status",
-    "ready",
-  );
-  await expect(page.locator(".map-load-error")).toHaveCount(0);
-  await expect(page.locator(".live-coverage-map")).toHaveAttribute(
-    "data-area",
-    "south",
-  );
+  await page.getByRole("tab", { name: /Highway 97 North/ }).click();
+  await expect(page.locator("#area-panel")).toContainText("heading north");
 });

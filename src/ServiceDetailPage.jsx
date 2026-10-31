@@ -1,23 +1,21 @@
 import React from "react";
 import { Icon } from "./icons";
+import { business } from "./data";
+import { heroImages } from "./heroImages";
 import { serviceDetails } from "./serviceContent";
 import { servicePageContent } from "./servicePageContent";
 import "./service-detail.css";
 
-export default function ServiceDetailPage({ id, onHelp }) {
+export default function ServiceDetailPage({ id }) {
   const service = serviceDetails.find((item) => item.id === id);
   const page = servicePageContent[id];
   if (!service || !page) return null;
   const related = serviceDetails.filter((item) => item.id !== id);
-  const requestHelp = (event) => {
-    event.currentTarget.focus({ preventScroll: true });
-    onHelp(id);
-  };
 
   return (
     <div className={`service-detail-page sd-${id}`}>
       <section className="sd-hero" id="home" aria-labelledby="sd-title">
-        <img className="sd-hero-photo" src={page.heroImage} alt={page.heroAlt} width="1536" height="1024" fetchPriority="high" />
+        <img className="sd-hero-photo" {...heroImages[id]} alt={page.heroAlt} width="1536" height="1024" fetchPriority="high" />
         <div className="sd-hero-inner">
           <nav className="sd-breadcrumb" aria-label="Breadcrumb">
             <a href="/">Home</a><Icon name="right" /><a href="/services/">Services</a><Icon name="right" /><span aria-current="page">{service.title}</span>
@@ -28,11 +26,11 @@ export default function ServiceDetailPage({ id, onHelp }) {
               <h1 id="sd-title">{service.title}<span>.</span></h1>
               <p>{page.heroLead}</p>
               <div className="sd-hero-actions">
-                <button type="button" className="sd-button sd-button-orange" onClick={requestHelp}>{service.action}<Icon name="arrow" /></button>
+                <a className="sd-button sd-button-orange" href={business.phoneHref}>{service.action}<Icon name="phone" /></a>
                 <a href="#capabilities" className="sd-hero-link">Explore this service <Icon name="down" /></a>
               </div>
             </div>
-            <span className="sd-hero-readout">PRINCE GEORGE / BC<br />SERVICE {service.number} OF 03</span>
+            <span className="sd-hero-readout">PRINCE GEORGE / BC<br />SERVICE {service.number} OF {String(serviceDetails.length).padStart(2, "0")}</span>
           </div>
         </div>
       </section>
@@ -88,7 +86,7 @@ export default function ServiceDetailPage({ id, onHelp }) {
               <li key={title}><span>0{index + 1}</span><div><strong>{title}</strong><p>{description}</p></div></li>
             ))}
           </ol>
-          <button type="button" className="sd-button" onClick={requestHelp}>{service.action}<Icon name="arrow" /></button>
+          <a className="sd-button" href={business.phoneHref}>{service.action}<Icon name="phone" /></a>
         </div>
       </section>
 
@@ -124,7 +122,7 @@ export default function ServiceDetailPage({ id, onHelp }) {
 
       <section className="sd-close" aria-labelledby="sd-close-title">
         <div><span className="sd-kicker">READY TO MAKE A PLAN?</span><h2 id="sd-close-title">Tell us where you are<span>.</span></h2><p>We’ll discuss the vehicle, the job, and what comes next.</p></div>
-        <button type="button" className="sd-button sd-button-orange" onClick={requestHelp}>{service.action}<Icon name="arrow" /></button>
+        <a className="sd-button sd-button-orange" href={business.phoneHref}>{service.action}<Icon name="phone" /></a>
       </section>
     </div>
   );

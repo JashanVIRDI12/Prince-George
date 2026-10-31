@@ -1,16 +1,17 @@
 import { services } from "./data";
+import { additionalServices } from "./additionalServices";
 
 export const serviceDetails = [
   {
     id: "towing",
-    number: "01",
-    category: "VEHICLE RECOVERY & TRANSPORT",
+    number: "02",
+    category: "CARS, SUVS, PICKUPS & VANS",
     indexCopy:
-      "Safe vehicle transport and recovery support when your vehicle cannot continue.",
-    image: "/images/recovery-detail.webp",
-    alt: "A recovery operator securing a vehicle wheel to a flatbed with an orange strap",
+      "Towing for cars, SUVs, pickups, and vans, across town or long-distance.",
+    image: "/images/fleet-heavy-equipment.webp",
+    alt: "Prince George Towing’s white and burgundy heavy recovery truck with rear lifting equipment",
     description:
-      "When your vehicle cannot continue, we help you move forward with safe and reliable towing solutions. From local breakdowns to longer-distance transport, we plan every tow based on your vehicle, its condition, and where it needs to go.",
+      "When your car, SUV, pickup, or van cannot continue, we help you move forward with safe and reliable towing. From local breakdowns to longer-distance transport, we plan every tow based on your vehicle, its condition, and where it needs to go.",
     features: [
       [
         "Local towing",
@@ -22,7 +23,7 @@ export const serviceDetails = [
       ],
       [
         "Flatbed transport",
-        "Flatbed towing offers secure transportation for vehicles that require extra care, including damaged, non-operational, or specialty vehicles.",
+        "Flatbed towing offers secure transportation for vehicles that require extra care, including damaged, non-operational, low-clearance, or all-wheel-drive vehicles.",
       ],
       [
         "Accident & vehicle recovery",
@@ -36,12 +37,12 @@ export const serviceDetails = [
   },
   {
     id: "roadside",
-    number: "02",
+    number: "03",
     category: "HELP WHERE YOU’VE STOPPED",
     indexCopy:
       "Battery boosts, tire changes, lockouts, and roadside solutions to help you move again.",
-    image: "/images/roadside-detail.webp",
-    alt: "A roadside professional connecting a jump starter under a vehicle hood",
+    image: "/images/fleet-roadside.webp",
+    alt: "A battery boost with Prince George Towing’s white and burgundy recovery truck in the background",
     description:
       "Sometimes a small issue can stop your entire day. Whether it’s a dead battery, flat tire, lockout, or fuel issue, we provide practical roadside support to help you get moving again.",
     features: [
@@ -65,42 +66,43 @@ export const serviceDetails = [
     prepare:
       "Have your location, vehicle make and model, and details about the issue ready when you call. This helps us understand your situation and provide the right support.",
     action: "Get roadside help",
-    imageLabel: "PRACTICAL HELP. RIGHT AT THE ROADSIDE.",
+    imageLabel: "ROADSIDE HELP",
   },
   {
     id: "heavy",
-    number: "03",
-    category: "COMMERCIAL VEHICLES & EQUIPMENT",
+    number: "01",
+    category: "BUSES, TRUCKS & EQUIPMENT",
     indexCopy:
-      "Reliable transport solutions for larger vehicles, RVs, and specialized equipment.",
-    image: "/images/heavy-recovery.webp",
-    alt: "A blue heavy-duty recovery truck transporting a semi truck on a northern highway",
+      "Heavy-duty towing for buses, coaches, semi trucks, commercial fleets, and equipment.",
+    image: "/images/fleet-coach.webp",
+    alt: "Prince George Towing’s white and burgundy wrecker towing a passenger coach beside a forested highway",
     description:
-      "A larger vehicle requires the right equipment and careful planning. We provide transport solutions for commercial vehicles, RVs, and specialized equipment, with the right approach based on the vehicle, location, and destination.",
+      "When a bus or semi truck stops, or equipment needs moving, the job needs the right setup and a clear plan. Prince George Towing provides heavy-duty towing, recovery, and equipment transport, with attention to weight, access, and the route to your destination.",
     features: [
       [
-        "Commercial vehicles",
-        "From work trucks to larger commercial vehicles, we provide reliable hauling support designed around your vehicle’s size, condition, and transport requirements.",
+        "Bus & coach towing",
+        "Towing support for passenger coaches, transit buses, and school buses. Tell us the vehicle’s length, weight, condition, and whether passengers have been safely moved before we plan the recovery.",
       ],
       [
-        "RVs & motorhomes",
-        "RVs and motorhomes require careful handling and the right equipment. We help transport larger recreational vehicles safely to their required destination.",
+        "Semi trucks & commercial fleets",
+        "Recovery and towing for highway tractors, work trucks, and commercial vehicles. We review the tractor, trailer, load, and access conditions to prepare the right approach.",
+      ],
+      [
+        "Heavy recovery & winching",
+        "For a disabled vehicle, collision, or off-road situation, we assess the vehicle’s position and surroundings before planning a controlled recovery.",
       ],
       [
         "Equipment transport",
-        "If you need help with specialized equipment or oversized loads, we help coordinate transport solutions with attention to secure loading and safe movement.",
-      ],
-      [
-        "Transport planning",
-        "Every heavy-duty move starts with understanding the details. We consider vehicle type, pickup location, destination, and equipment needs before arranging transport.",
+        "Transport planning for equipment, motorhomes, and larger vehicles. Share the dimensions, weight, pickup conditions, and destination so we can confirm availability and requirements.",
       ],
     ],
     prepare:
-      "Share your vehicle or equipment details, pickup location, destination, and any specific requirements so we can understand the right approach for your transport.",
+      "Have your bus, truck, or equipment details ready: approximate weight and dimensions, load, vehicle condition, pickup access, and destination. These details help us plan the right response.",
     action: "Get heavy-duty help",
-    imageLabel: "THE VEHICLE. THE LOAD. THE WHOLE JOB.",
+    imageLabel: "BUS & COACH TOWING",
   },
-].map((detail) => ({
+  ...additionalServices,
+].sort((a, b) => Number(a.number) - Number(b.number)).map((detail) => ({
   ...services.find((service) => service.id === detail.id),
   ...detail,
   path: `/services/${detail.id}/`,

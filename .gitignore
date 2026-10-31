@@ -28,3 +28,7 @@ npm-debug.log*
 !.vscode/extensions.json
 .idea/
 *.swp
+
+# cPanel export
+public_html/
+public_html.zip

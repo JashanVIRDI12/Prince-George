@@ -7,6 +7,8 @@ import { flushSync } from "react-dom";
 import { Icon } from "./icons";
 import CoverageMap from "./CoverageMap";
 import { areas, business, services } from "./data";
+import { heroImages } from "./heroImages";
+import { additionalServices } from "./additionalServices";
 import "./about-page.css";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
@@ -83,8 +85,8 @@ function Roads() {
         <span className="ab-kicker">03 / WHERE WE GO</span>
         <h2 id="ab-roads-title">Where the roads connect.</h2>
         <p>
-          Serving Prince George and surrounding routes with towing, roadside
-          assistance, and vehicle transport support. Select your area or highway
+          Serving Prince George and surrounding routes with car and pickup
+          towing, bus and truck towing, heavy recovery, and roadside support. Select your area or highway
           route to see where we can help.
         </p>
         <div className="ab-roads-tabs" role="tablist" aria-label="Roads out of Prince George">
@@ -130,26 +132,33 @@ const fieldScenes = [
   {
     id: "roadside",
     short: "Roadside help",
-    image: "/images/roadside-detail.webp",
+    image: "/images/fleet-roadside.webp",
     note: "A boost, a tire, a way forward.",
   },
   {
     id: "towing",
-    short: "Towing & recovery",
-    image: "/images/recovery-detail.webp",
+    short: "Car & pickup towing",
+    image: "/images/fleet-heavy-equipment.webp",
     note: "Care in every connection.",
   },
   {
     id: "heavy",
-    short: "Heavy hauling",
-    image: "/images/heavy-recovery.webp",
-    note: "The right move for heavy loads",
-    text: "Moving larger vehicles and equipment takes more than a truck. We plan around the size, weight, access, and destination to arrange the right transport solution.",
+    short: "Bus & truck towing",
+    image: "/images/fleet-coach.webp",
+    note: "Big vehicles. The right recovery.",
+    text: "From passenger coaches to semi trucks, we plan around the vehicle’s weight, condition, access, and destination. Bus towing scene shown for illustration.",
   },
-];
+  ...additionalServices.map((service) => ({
+    id: service.id,
+    short: service.title,
+    image: service.image,
+    note: service.imageHeading.join(" "),
+    text: `${service.description} Scene shown for illustration.`,
+  })),
+].sort((a, b) => services.findIndex((item) => item.id === a.id) - services.findIndex((item) => item.id === b.id));
 
 function FieldGallery() {
-  const [active, setActive] = useState("towing");
+  const [active, setActive] = useState("heavy");
   const root = useRef(null);
   const scene = fieldScenes.find((item) => item.id === active);
   const service = services.find((item) => item.id === active);
@@ -218,7 +227,7 @@ function FieldGallery() {
   );
 }
 
-export default function AboutPage({ onHelp }) {
+export default function AboutPage() {
   const root = useRef(null);
 
   useLayoutEffect(() => {
@@ -350,22 +359,22 @@ export default function AboutPage({ onHelp }) {
       <section className="ab-hero" id="home" aria-labelledby="about-title">
         <figure className="ab-hero-media">
           <img
-            src="/images/about-road-crew.webp"
-            alt="A recovery operator in an orange safety jacket checks a vehicle strapped onto a blue flatbed at a forest roadside"
+            {...heroImages.about}
+            alt="Prince George Towing’s heavy recovery truck with rear lifting and winching equipment"
             width="1536"
             height="864"
             fetchPriority="high"
             decoding="async"
           />
-          <figcaption><span>PRINCE GEORGE, BC</span><span>ROAD CREW / ON THE JOB</span></figcaption>
+          <figcaption><span>PRINCE GEORGE, BC</span><span>OUR HEAVY RECOVERY TRUCK</span></figcaption>
         </figure>
         <div className="ab-hero-copy">
           <span className="ab-kicker">PRINCE GEORGE TOWING / ABOUT US</span>
           <h1 id="about-title" className="ab-title">The help you need <em>when things stop moving</em></h1>
           <p className="ab-lede">
-            Breakdowns happen. When they do, our team provides towing, recovery,
-            and roadside assistance designed to get you the right solution and
-            the next step forward.
+            From everyday cars and pickups to buses, coaches, and semi trucks,
+            we tow and recover vehicles in Prince George, alongside equipment
+            transport, offloading services, and roadside assistance.
           </p>
           <div className="ab-hero-actions">
             <a className="ab-hero-primary" href="#how-we-work">How we work <span aria-hidden="true">↓</span></a>
@@ -404,10 +413,10 @@ export default function AboutPage({ onHelp }) {
         <div className="ab-close-side">
           <p>Day or night, tell us where you are and what happened. We’ll help understand the situation and guide you toward the right next step.</p>
           <div className="ab-close-actions">
-            <button className="action-button button-blue" onClick={(event) => { event.currentTarget.focus({ preventScroll: true }); onHelp(); }}>
+            <a className="action-button button-blue" href={business.phoneHref}>
               <span>Get help now</span><span className="button-icon"><Icon name="phone" /></span>
-            </button>
-            {business.phone && <a className="ab-link" href={business.phoneHref}>Call {business.phone}</a>}
+            </a>
+            <a className="ab-link" href={business.phoneHref}>Call {business.phone}</a>
             <a className="ab-link" href="/contact/">Contact us</a>
           </div>
         </div>

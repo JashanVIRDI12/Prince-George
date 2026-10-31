@@ -1,14 +1,15 @@
+import { additionalServices } from "./additionalServices";
+
 // Copy for the individual service pages. `features` and `fieldCopy` replace
 // the services page versions in serviceContent.js on these pages.
 export const servicePageContent = {
   towing: {
-    heroImage: "/images/northern-road-recovery.webp",
-    heroAlt: "Blue flatbed towing an SUV on a northern British Columbia road",
+    heroAlt: "Prince George Towing’s heavy-duty recovery truck and lifting equipment",
     heroLead:
-      "When your vehicle is stuck, we provide safe and reliable transport solutions designed around your vehicle, location, and destination.",
+      "Towing for cars, SUVs, pickups, and vans in Prince George, planned around your vehicle, location, and destination.",
     introHeading: "When your vehicle cannot make the trip.",
     introCopy:
-      "A breakdown, collision, or vehicle issue can leave you stuck when you least expect it. Tell us what happened, where your vehicle is located, and what condition it’s in. We’ll help determine the right towing approach, equipment, and destination before arranging the move.",
+      "A breakdown, collision, or dead battery can leave your car or pickup stuck when you least expect it. Tell us what happened, where your vehicle is located, and what condition it’s in. We’ll help determine the right towing approach, equipment, and destination before arranging the move.",
     capabilityLead:
       "From a simple local tow to a more involved recovery, every situation requires a different approach. We assess your vehicle, location, and needs to arrange the right solution.",
     features: [
@@ -29,9 +30,9 @@ export const servicePageContent = {
         "After a collision or difficult roadside situation, we help assess the vehicle and arrange safe recovery based on the circumstances.",
       ],
     ],
-    fieldImage: "/images/recovery-detail.webp",
-    fieldAlt: "Recovery operator securing a vehicle wheel to a flatbed",
-    fieldCaption: "THE VEHICLE IS SECURED FOR THE MOVE",
+    fieldImage: "/images/fleet-heavy-equipment.webp",
+    fieldAlt: "Rear lifting equipment on Prince George Towing’s heavy-duty wrecker",
+    fieldCaption: "RECOVERY EQUIPMENT MATCHED TO THE JOB",
     fieldHeading: "Start with where it is. We’ll plan where it goes.",
     fieldCopy:
       "Having the right details ready helps us understand the situation and arrange the right support. Share your location, vehicle information, and where it needs to be taken.",
@@ -49,8 +50,7 @@ export const servicePageContent = {
     ],
   },
   roadside: {
-    heroImage: "/images/roadside-detail.webp",
-    heroAlt: "Roadside professional connecting a jump starter under a vehicle hood",
+    heroAlt: "A roadside technician providing a battery boost beside Prince George Towing’s white and burgundy truck",
     heroLead:
       "Practical help when your vehicle needs a little support. Battery issues, flat tires, lockouts, or running out of fuel. We’ll help assess the situation and provide the right roadside solution to get you moving again.",
     introHeading: "When a small problem stops the journey.",
@@ -76,8 +76,8 @@ export const servicePageContent = {
         "Running low or out of fuel? Tell us your location and vehicle requirements, and we’ll help get you what you need.",
       ],
     ],
-    fieldImage: "/images/services-roadside-hero.webp",
-    fieldAlt: "Blue tow truck preparing to load a car at a safe roadside turnout",
+    fieldImage: "/images/fleet-recovery-profile.webp",
+    fieldAlt: "Prince George Towing’s white and burgundy heavy recovery truck",
     fieldCaption: "ROADSIDE HELP, WITH A PLAN FOR WHAT FOLLOWS",
     fieldHeading: "Tell us what happened. We’ll take it from there.",
     fieldCopy:
@@ -96,50 +96,32 @@ export const servicePageContent = {
     ],
   },
   heavy: {
-    heroImage: "/images/heavy-recovery.webp",
-    heroAlt: "Blue heavy-duty recovery truck transporting a commercial vehicle",
+    heroAlt: "Prince George Towing’s white and burgundy Kenworth heavy-duty recovery truck",
     heroLead:
-      "Transport solutions built around larger vehicles, specialized equipment, and the planning required to move them safely.",
-    introHeading: "When the move requires more planning",
+      "Heavy-duty towing and recovery for buses, coaches, semi trucks, and commercial fleets, plus equipment transport in Prince George and surrounding areas.",
+    introHeading: "Big vehicles. A carefully planned recovery.",
     introCopy:
-      "Heavy vehicles and equipment require the right approach before transport begins. Share what needs moving, where it is located, and where it needs to go. We’ll help confirm the equipment, route, and details needed for the job.",
+      "A bus breakdown or disabled semi truck calls for more than a standard tow. We plan the response around the vehicle’s weight, condition, load, and location. From a highway shoulder to a commercial yard, we discuss equipment, access, and the destination before the job starts.",
     capabilityLead:
-      "Every heavy-duty move comes with different requirements. We help plan transport based on the vehicle, equipment, route, and destination.",
-    features: [
-      [
-        "Commercial vehicles",
-        "Transport support for work trucks, fleet vehicles, and commercial units. We’ll discuss the vehicle details, condition, and equipment needed for the move.",
-      ],
-      [
-        "RVs & motorhomes",
-        "Moving larger recreational vehicles requires careful planning. Share the size, condition, and destination so we can prepare the right approach.",
-      ],
-      [
-        "Equipment transport",
-        "From specialized equipment to larger loads, we consider weight, dimensions, and access requirements before arranging transport.",
-      ],
-      [
-        "Transport planning",
-        "Every move starts with the right details. We help coordinate routes, pickup requirements, and equipment availability before the job begins.",
-      ],
-    ],
-    fieldImage: "/images/northern-territory.webp",
-    fieldAlt: "Northern British Columbia highway through forested terrain",
-    fieldCaption: "THE ROUTE IS PART OF THE JOB",
-    fieldHeading: "The right details help plan the right move",
+      "Alongside car towing, we handle heavy-duty recovery for buses and commercial trucks, plus equipment transport planned around size, weight, access, and destination.",
+    fieldImage: "/images/fleet-coach.webp",
+    fieldAlt: "Prince George Towing’s white and burgundy wrecker towing a passenger coach at a forested highway turnout",
+    fieldCaption: "BUS & COACH TOWING",
+    fieldHeading: "Tell us about the bus, the truck, and the road.",
     fieldCopy:
-      "Have the vehicle or equipment details ready before you call. Information about the size, weight, condition, and location helps us understand the requirements and plan the transport properly.",
+      "The right vehicle details help us prepare the right recovery. Tell dispatch what has stopped, where it is, and whether it can roll or steer. For a bus, let us know whether passengers are still on board; for a truck, describe the trailer and load.",
     steps: [
-      ["Vehicle and load", "Share what needs to be moved, including the vehicle type, equipment details, approximate weight, and dimensions."],
-      ["Pickup conditions", "Tell us where the vehicle or equipment is located, including access points, surroundings, and any challenges at the pickup site."],
-      ["Route and destination", "Provide the pickup location and final destination so we can consider the route, distance, and transport requirements."],
+      ["Vehicle and load", "Share the bus or truck type, approximate weight and length, trailer or load details, and any damage or mechanical issues."],
+      ["Location and access", "Give your highway, direction of travel, nearest kilometre marker, and room for recovery equipment. Mention soft ground, narrow access, or blocked lanes."],
+      ["Destination and handoff", "Tell us the repair facility, depot, or yard you need. We’ll discuss the route, equipment availability, and service details before arranging the move."],
     ],
     questions: [
-      ["What information should I have ready before arranging a heavy-duty move?", "Have the vehicle or equipment type, approximate dimensions, weight, pickup location, destination, and any access details available. This helps us understand the requirements before planning the transport."],
-      ["Can you move an RV or motorhome?", "Yes. We can help arrange transport for RVs and motorhomes based on their size, condition, location, and destination requirements."],
-      ["Can you transport equipment?", "Yes. We can discuss equipment transport requirements, including weight, dimensions, access conditions, and the equipment needed for the move."],
-      ["Do you handle commercial vehicles and work trucks?", "Yes. We assist with transport planning for commercial vehicles, including work trucks and larger units that require specialized handling."],
-      ["How do you plan a heavy-duty transport job?", "We review the vehicle details, pickup conditions, route, destination, and equipment requirements to determine the right approach for the move."],
+      ["Can you tow buses and passenger coaches?", "Yes. We provide heavy-duty towing support for buses and coaches. Share the bus type, approximate length and weight, condition, location, and passenger situation so we can confirm the right recovery plan."],
+      ["Do you recover semi trucks and commercial vehicles?", "Yes. We assist with semi trucks, highway tractors, work trucks, and commercial fleets. Tell us about the tractor, trailer, load, and any damage so we can determine the equipment and access needed."],
+      ["Can you help with a vehicle off the road?", "Call with the vehicle’s position, ground conditions, access, and any damage. We’ll discuss winching and recovery options based on the situation and available equipment."],
+      ["Can you move equipment or a motorhome?", "We can discuss transport for equipment, RVs, and motorhomes. Have the dimensions, approximate weight, condition, pickup location, and destination ready so we can confirm requirements."],
+      ["Can you arrange a longer-distance heavy-duty tow?", "Share the pickup point and destination with dispatch. We’ll review the vehicle, route, distance, and equipment availability before confirming the move."],
     ],
   },
+  ...Object.fromEntries(additionalServices.map((service) => [service.id, service])),
 };

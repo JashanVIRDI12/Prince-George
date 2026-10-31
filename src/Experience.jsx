@@ -1,7 +1,8 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { services, areas, faqs, business, vehicleRecoveryModal } from "./data";
+import { services, areas, faqs, business } from "./data";
+import { additionalServices } from "./additionalServices";
 import { Icon } from "./icons";
 import CoverageMap from "./CoverageMap";
 
@@ -9,8 +10,8 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const serviceVisuals = {
   towing: {
-    src: "/images/recovery-detail.webp",
-    alt: "Gloved hands securing a vehicle wheel to a recovery flatbed with an orange strap",
+    src: "/images/fleet-heavy-equipment.webp",
+    alt: "Prince George Towing’s heavy recovery truck and rear lifting equipment",
     title: (
       <>
         Reliable recovery.
@@ -18,11 +19,11 @@ export const serviceVisuals = {
         <em>Safe transport.</em>
       </>
     ),
-    category: "RECOVERY / TRANSPORT",
+    category: "CARS / SUVS / PICKUPS / VANS",
   },
   roadside: {
-    src: "/images/roadside-detail.webp",
-    alt: "A roadside professional connecting a jump starter beneath a vehicle hood",
+    src: "/images/fleet-roadside.webp",
+    alt: "A roadside technician beside Prince George Towing’s white and burgundy recovery truck",
     title: (
       <>
         Small problem.
@@ -31,19 +32,28 @@ export const serviceVisuals = {
       </>
     ),
     category: "ASSISTANCE / REPAIR",
+    note: "OUR RECOVERY TRUCK",
   },
   heavy: {
-    src: "/images/heavy-recovery.webp",
-    alt: "Blue heavy-duty recovery truck transporting a semi truck on a northern highway",
+    src: "/images/fleet-coach.webp",
+    alt: "Prince George Towing’s white and burgundy recovery truck towing a passenger coach",
     title: (
       <>
-        Powerful equipment.
+        Big vehicles.
         <br />
-        <em>Professional handling.</em>
+        <em>The right recovery.</em>
       </>
     ),
-    category: "COMMERCIAL / HEAVY DUTY",
+    category: "BUSES / TRUCKS / EQUIPMENT",
+    note: "BUS & COACH TOWING",
   },
+  ...Object.fromEntries(additionalServices.map((service) => [service.id, {
+    src: service.image,
+    alt: service.alt,
+    title: <>{service.imageHeading[0]}<br /><em>{service.imageHeading[1]}</em></>,
+    category: service.category,
+    note: service.imageLabel,
+  }])),
 };
 
 function Chapter({ number, children, light = false }) {
@@ -72,7 +82,7 @@ function EditorialLink({ children, onClick, href, className = "" }) {
   );
 }
 
-function CompanyIntro({ onHelp, onService }) {
+function CompanyIntro({ onService }) {
   return (
     <section
       className="company-intro"
@@ -81,8 +91,10 @@ function CompanyIntro({ onHelp, onService }) {
     >
       <div className="company-photo exp-reveal">
         <img
-          src="/images/northern-road-recovery.webp"
-          alt="A blue flatbed tow truck carrying an SUV beside a northern highway"
+          src="/images/fleet-highway.webp"
+          srcSet="/images/fleet-highway-960.webp 960w, /images/fleet-highway-1280.webp 1280w, /images/fleet-highway.webp 1536w"
+          sizes="(max-width: 900px) 100vw, 50vw"
+          alt="Prince George Towing’s white and burgundy heavy recovery truck on a forested highway"
           width="1536"
           height="1024"
           loading="lazy"
@@ -90,31 +102,34 @@ function CompanyIntro({ onHelp, onService }) {
         <div className="company-photo-caption">
           <Icon name="pin" />
           <span>PRINCE GEORGE, BC</span>
-          <span className="photo-caption-line" />
-          <span>LOCAL & LONG-DISTANCE</span>
         </div>
       </div>
       <div className="company-copy">
         <Chapter number="01">YOUR LOCAL TOWING COMPANY</Chapter>
         <h2 className="company-heading exp-reveal" id="company-heading">
-          Tell us what happened.
+          Every vehicle.
           <br />
-          <span>We’ll take it from there.</span>
+          <span>Local towing support.</span>
         </h2>
         <p className="company-lead">
-          If your car is not starting or needs a tow, Prince George Towing helps
-          drivers in Prince George and the surrounding area find the right next
-          step.
+          Whether it’s a car that won’t start or a semi truck stopped on the
+          highway, every tow needs equipment built for the job. Prince George Towing
+          helps drivers and fleet operators in Prince George and the
+          surrounding area get the right tow.
         </p>
         <p className="company-body">
-          Call with your location, vehicle type, and a brief description of the
-          problem. We’ll discuss the help you need, where the vehicle needs to
-          go, and the cost before work begins.
+          Call with your location, vehicle, and what happened. From car and
+          pickup towing to bus, truck, and equipment recovery, we’ll discuss
+          access, the destination, and cost before work begins.
         </p>
         <ul className="company-promises">
           <li>
             <Icon name="check" />
-            <span>Towing and roadside help for everyday breakdowns</span>
+            <span>Towing for cars, SUVs, pickups, and vans</span>
+          </li>
+          <li>
+            <Icon name="check" />
+            <span>Heavy-duty towing for buses, semi trucks, and commercial fleets</span>
           </li>
           <li>
             <Icon name="check" />
@@ -122,11 +137,11 @@ function CompanyIntro({ onHelp, onService }) {
           </li>
           <li>
             <Icon name="check" />
-            <span>Vehicle transport to your chosen destination</span>
+            <span>Equipment transport to your repair facility, depot, or yard</span>
           </li>
         </ul>
         <div className="company-actions">
-          <EditorialLink className="company-button" onClick={() => onHelp()}>
+          <EditorialLink className="company-button" href={business.phoneHref}>
             Get towing help
           </EditorialLink>
           <a className="company-secondary" href="/services/">
@@ -139,14 +154,14 @@ function CompanyIntro({ onHelp, onService }) {
       </div>
       <div className="company-service-strip">
         {[
+          { id: "towing", icon: "shield", title: "Car towing" },
+          { id: "heavy", icon: "heavy", title: "Heavy-duty towing" },
           {
-            id: "towing",
-            icon: "shield",
-            title: "Towing & recovery",
-            modal: vehicleRecoveryModal,
+            id: "equipment",
+            icon: "truck",
+            title: "Heavy equipment",
           },
-          { id: "roadside", icon: "clock", title: "Roadside assistance" },
-          { id: "towing", icon: "pin", title: "Local & long-distance" },
+          { id: "offloading", icon: "heavy", title: "Offloading services" },
         ].map((item) => (
           <button
             key={item.title}
@@ -166,7 +181,7 @@ function CompanyIntro({ onHelp, onService }) {
   );
 }
 
-function ServiceShowcase({ onService, onHelp }) {
+function ServiceShowcase({ onService }) {
   const [active, setActive] = useState(0);
   const media = useRef(null);
   const chosen = services[active];
@@ -199,11 +214,11 @@ function ServiceShowcase({ onService, onHelp }) {
       e.key === "Home"
         ? 0
         : e.key === "End"
-          ? 2
+          ? services.length - 1
           : (active +
               (["ArrowDown", "ArrowRight"].includes(e.key) ? 1 : -1) +
-              3) %
-            3;
+              services.length) %
+            services.length;
     setActive(next);
     document.getElementById(`service-tab-${services[next].id}`)?.focus();
   };
@@ -215,15 +230,15 @@ function ServiceShowcase({ onService, onHelp }) {
             THE RIGHT KIND OF HELP
           </Chapter>
           <h2 className="editorial-heading exp-reveal">
-            Reliable help for
+            Cars. Heavy duty.
             <br />
-            every roadside situation.
+            Equipment &amp; offloading.
           </h2>
         </div>
         <p>
-          Unexpected breakdowns? Vehicle recovery needed?
+          Cars, buses, semi trucks, heavy equipment, and offloading.
           <br />
-          Don’t worry, we provide the right support when you need it most.
+          Find the right towing, recovery, or roadside support.
         </p>
       </div>
       <div className="lab-layout">
@@ -263,7 +278,7 @@ function ServiceShowcase({ onService, onHelp }) {
               <br />
               That’s what we’re here for.
             </p>
-            <EditorialLink onClick={() => onHelp()}>
+            <EditorialLink href={business.phoneHref}>
               Talk it through
             </EditorialLink>
           </div>
@@ -287,7 +302,7 @@ function ServiceShowcase({ onService, onHelp }) {
             />
             <div className="film-top">
               <span>PG / FIELD OPERATIONS</span>
-              <span>0{active + 1} — 03</span>
+              <span>{chosen.number} — {String(services.length).padStart(2, "0")}</span>
             </div>
             <div className="film-bottom">
               <h3>{visual.title}</h3>
@@ -304,6 +319,7 @@ function ServiceShowcase({ onService, onHelp }) {
             </div>
           </div>
           <div className="service-caption">
+            {visual.note && <span className="console-label">{visual.note}</span>}
             <p>{chosen.description}</p>
             <ul>
               {chosen.tags.map((tag) => (
@@ -334,11 +350,11 @@ const serviceSteps = [
     text: "Start by sharing your location, vehicle details, and what went wrong. The more we know, the better we can understand the situation and send the right help.",
     checklist: [
       "Your location and callback number",
-      "Vehicle make, model, and condition",
+      "Vehicle make, model, and condition (and weight or load for heavy vehicles)",
       "What happened and where you need to go",
     ],
     note: "Not sure what service you need? Just explain the situation, and we’ll help guide you through the next step.",
-    action: "Prepare your request",
+    action: "Call us now",
   },
   {
     title: "Confirm the plan",
@@ -370,7 +386,7 @@ const serviceSteps = [
   },
 ];
 
-function ServiceProcess({ onHelp }) {
+function ServiceProcess() {
   const [active, setActive] = useState(0);
   const step = serviceSteps[active];
   const panel = useRef(null);
@@ -455,7 +471,7 @@ function ServiceProcess({ onHelp }) {
             <span className="practical-eyebrow">STEP 0{active + 1} OF 03</span>
             <h3>{step.heading}</h3>
             <p>{step.text}</p>
-            <EditorialLink onClick={() => onHelp()}>
+            <EditorialLink href={business.phoneHref}>
               {step.action}
             </EditorialLink>
           </div>
@@ -492,7 +508,7 @@ function ServiceProcess({ onHelp }) {
   );
 }
 
-function ServiceAreas({ onHelp }) {
+function ServiceAreas() {
   const [active, setActive] = useState(0);
   const area = { ...areas[active], ...areas[active].home };
   const keydown = (event) => {
@@ -567,7 +583,7 @@ function ServiceAreas({ onHelp }) {
             <h3>{area.name}</h3>
             <strong>{area.route}</strong>
             <p>{area.detail}</p>
-            <EditorialLink className="company-button" onClick={() => onHelp()}>
+            <EditorialLink className="company-button" href={business.phoneHref}>
               Check service availability
             </EditorialLink>
           </div>
@@ -584,7 +600,7 @@ function ServiceAreas({ onHelp }) {
   );
 }
 
-function FieldNotes({ onHelp }) {
+function FieldNotes() {
   const [active, setActive] = useState(0);
   const [query, setQuery] = useState("");
   const filtered = faqs
@@ -702,7 +718,7 @@ function FieldNotes({ onHelp }) {
                 Every roadside situation is different. Tell us yours, and we’ll
                 help you work out the next step.
               </p>
-              <EditorialLink onClick={() => onHelp()}>
+              <EditorialLink href={business.phoneHref}>
                 Start a conversation
               </EditorialLink>
             </>
@@ -713,8 +729,7 @@ function FieldNotes({ onHelp }) {
   );
 }
 
-function ContactChapter({ onHelp }) {
-  const [selected, setSelected] = useState("towing");
+function ContactChapter() {
   return (
     <section className="contact-chapter" id="contact">
       <div className="contact-top">
@@ -743,31 +758,16 @@ function ContactChapter({ onHelp }) {
           <span className="desk-dot" />
           <span>YOUR NEXT MOVE</span>
         </div>
-        <label>
-          <span>I could use a hand with</span>
-          <select
-            aria-label="Choose help for your next move"
-            value={selected}
-            onChange={(e) => setSelected(e.target.value)}
-          >
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          onClick={(e) => {
-            e.currentTarget.focus();
-            onHelp(selected);
-          }}
-        >
+        <div className="desk-number">
+          <span>Call dispatch, day or night</span>
+          <a href={business.phoneHref}>{business.phone}</a>
+        </div>
+        <a href={business.phoneHref}>
           Let’s get you moving{" "}
           <span>
-            <Icon name="arrow" />
+            <Icon name="phone" />
           </span>
-        </button>
+        </a>
       </div>
       <div className="contact-afterword">
         <p>
@@ -785,7 +785,7 @@ function ContactChapter({ onHelp }) {
   );
 }
 
-export function SiteFooter({ onHelp, homePrefix = "" }) {
+export function SiteFooter({ homePrefix = "" }) {
   return (
     <footer className="site-footer-new">
       <div className="footer-directory">
@@ -804,11 +804,11 @@ export function SiteFooter({ onHelp, homePrefix = "" }) {
         <div className="footer-address">
           <span className="console-label">PRINCE GEORGE TOWING</span>
           <p>
-            Prince George Towing
+            {business.legalName}
             <br />
-            Northern British Columbia
+            Prince George, British Columbia
           </p>
-          <span>Good people. Wherever the road goes.</span>
+          <span>Car and heavy-duty towing. Local recovery support.</span>
         </div>
         <div className="footer-links">
           <span className="console-label">QUICK LINKS</span>
@@ -827,17 +827,13 @@ export function SiteFooter({ onHelp, homePrefix = "" }) {
           <a href="/contact/">
             Contact <Icon name="arrow" />
           </a>
+          <a href={business.mapsUrl} target="_blank" rel="noopener">
+            Find us on Google <Icon name="arrow" />
+          </a>
         </div>
         <div className="footer-contact">
           <span className="console-label">WHEN YOU NEED US</span>
-          {business.phone ? (
-            <a href={business.phoneHref}>{business.phone}</a>
-          ) : (
-            <button onClick={() => onHelp()}>
-              Let’s talk.
-              <Icon name="arrow" />
-            </button>
-          )}
+          <a href={business.phoneHref}>{business.phone}</a>
           <p>
             Your way forward
             <br />
@@ -846,7 +842,9 @@ export function SiteFooter({ onHelp, homePrefix = "" }) {
         </div>
       </div>
       <div className="footer-colophon">
-        <span>© {new Date().getFullYear()} PRINCE GEORGE TOWING</span>
+        <span>
+          © {new Date().getFullYear()} {business.legalName.toUpperCase()}
+        </span>
         <span>FOR THE ROAD. FOR THE PEOPLE.</span>
         <a href="#home">
           BACK TO THE TOP <Icon name="arrow" />
@@ -856,7 +854,7 @@ export function SiteFooter({ onHelp, homePrefix = "" }) {
   );
 }
 
-export default function Experience({ onHelp, onService }) {
+export default function Experience({ onService }) {
   const root = useRef(null);
   useLayoutEffect(() => {
     const mm = gsap.matchMedia();
@@ -879,12 +877,12 @@ export default function Experience({ onHelp, onService }) {
   }, []);
   return (
     <div className="new-experience" ref={root}>
-      <CompanyIntro onHelp={onHelp} onService={onService} />
-      <ServiceShowcase onService={onService} onHelp={onHelp} />
-      <ServiceProcess onHelp={onHelp} />
-      <ServiceAreas onHelp={onHelp} />
-      <FieldNotes onHelp={onHelp} />
-      <ContactChapter onHelp={onHelp} />
+      <CompanyIntro onService={onService} />
+      <ServiceShowcase onService={onService} />
+      <ServiceProcess />
+      <ServiceAreas />
+      <FieldNotes />
+      <ContactChapter />
     </div>
   );
 }

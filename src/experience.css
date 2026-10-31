@@ -633,31 +633,34 @@
   border-radius: 50%;
   background: var(--blue);
 }
-.contact-desk > label {
+.contact-desk > .desk-number {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-.contact-desk > label > span {
+.contact-desk > .desk-number > span {
   font-size: 9px;
   color: #526171;
 }
-.contact-desk select {
+.desk-number > a {
+  display: flex;
+  align-items: center;
   border: 0;
   border-radius: 0;
   background: transparent;
   width: 100%;
   padding: 4px 22px 4px 0;
   min-height: 36px;
-  font-size: 17px;
+  font-size: 22px;
+  font-weight: 600;
   color: var(--night);
   font-family: var(--body);
   letter-spacing: -0.4px;
   cursor: pointer;
 }
-.contact-desk > button {
+.contact-desk > a {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -670,22 +673,22 @@
   min-width: 258px;
   transition: background 0.25s;
 }
-.contact-desk > button > span {
+.contact-desk > a > span {
   display: grid;
   place-items: center;
   min-height: 48px;
   min-width: 48px;
   border: 1px solid #081e3055;
 }
-.contact-desk > button .icon {
+.contact-desk > a .icon {
   width: 21px;
   height: 21px;
   transition: transform 0.3s;
 }
-.contact-desk > button:hover {
+.contact-desk > a:hover {
   background: #ffa170;
 }
-.contact-desk > button:hover .icon {
+.contact-desk > a:hover .icon {
   transform: rotate(45deg);
 }
 .contact-afterword {
@@ -784,6 +787,7 @@
 }
 .footer-contact > button,
 .footer-contact > a {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1007,19 +1011,19 @@
     font-size: 7px;
     padding-right: 13px;
   }
-  .contact-desk > button {
+  .contact-desk > a {
     min-width: 222px;
     gap: 15px;
     font-size: 11px;
     padding-left: 18px;
   }
-  .contact-desk select {
+  .desk-number > a {
     font-size: 15px;
   }
   .footer-directory {
     gap: 25px;
   }
-  .footer-contact > button {
+  .footer-contact > a {
     font-size: 23px;
   }
   .footer-address > p {
@@ -1044,7 +1048,8 @@
     padding-right: 0;
   }
   .service-tabs {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
   }
   .service-tabs > button {
@@ -1059,6 +1064,7 @@
     padding-left: 0;
   }
   .service-tabs > button:last-child {
+    grid-column: 1 / -1;
     border-right: 0;
     padding-right: 0;
   }
@@ -1144,10 +1150,10 @@
     width: 110px;
     min-height: 64px;
   }
-  .contact-desk > label {
+  .contact-desk > .desk-number {
     flex: 1;
   }
-  .contact-desk > button {
+  .contact-desk > a {
     width: 100%;
     min-height: 56px;
     margin-top: 4px;
@@ -1174,7 +1180,7 @@
   .footer-contact > p {
     margin: 0 0 0 auto;
   }
-  .footer-contact > button {
+  .footer-contact > a {
     font-size: 24px;
   }
   .footer-colophon {
@@ -1483,19 +1489,19 @@
     height: 5px;
     width: 5px;
   }
-  .contact-desk > label {
+  .contact-desk > .desk-number {
     margin-top: 17px;
     gap: 5px;
   }
-  .contact-desk > label > span {
+  .contact-desk > .desk-number > span {
     font-size: 9px;
   }
-  .contact-desk select {
+  .desk-number > a {
     font-size: 16px;
     min-height: 39px;
     padding-left: 0;
   }
-  .contact-desk > button {
+  .contact-desk > a {
     width: 100%;
     margin-top: 18px;
     min-height: 53px;
@@ -1504,11 +1510,11 @@
     gap: 15px;
     font-size: 11px;
   }
-  .contact-desk > button > span {
+  .contact-desk > a > span {
     min-width: 42px;
     min-height: 42px;
   }
-  .contact-desk > button .icon {
+  .contact-desk > a .icon {
     width: 19px;
     height: 19px;
   }
@@ -1635,7 +1641,7 @@
   .new-mobile-help {
     min-height: 56px;
   }
-  .new-mobile-help > button {
+  .new-mobile-help > a {
     background: var(--paper);
     color: var(--night);
   }
@@ -1683,8 +1689,20 @@
     font-size: 4px;
     max-width: 116px;
   }
-  .footer-contact > button {
+  .footer-contact > a {
     font-size: 20px;
     gap: 9px;
+  }
+}
+@media (max-width: 600px) {
+  .footer-contact > a {
+    font-size: clamp(20px, 5.6vw, 24px);
+    letter-spacing: -0.6px;
+  }
+}
+/* Below this width half a column cannot hold the number on one line. */
+@media (max-width: 400px) {
+  .footer-contact {
+    grid-column: 1 / -1;
   }
 }

@@ -1,35 +1,28 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Icon } from "./icons";
+import { business } from "./data";
 
 function RecoveryTruckFigure() {
   return (
     <svg viewBox="0 0 240 120" aria-hidden="true" focusable="false">
       <g fill="currentColor">
-        {/* Passenger vehicle on the flatbed. Filled shapes stay legible at small sizes. */}
-        <path d="M24 59h8l15-19h57l18 19h12v13H24z" />
-        <rect x="15" y="74" width="139" height="9" rx="2" />
-        <path d="M18 82h143v13H18z" />
-        {/* Flatbed cab and bumper. */}
-        <path d="M154 46h39l28 28v21h-67z" />
-        <rect x="217" y="83" width="12" height="11" rx="2" />
-        <rect x="13" y="90" width="216" height="6" rx="2" />
-        {/* Tires and hubs. */}
-        <circle cx="49" cy="95" r="15" />
-        <circle cx="89" cy="95" r="15" />
-        <circle cx="191" cy="95" r="15" />
+        {/* Coach behind a heavy wrecker, connected by an underlift. */}
+        <path d="M8 33h107l10 13v43H8z" />
+        <path d="M122 83h28v7h-28zM146 68h44v27h-44z" />
+        <path d="M156 68V45h8v23zM160 44l23 18-5 6-24-20z" />
+        <path d="M190 44h24l18 27v24h-42z" />
+        <rect x="230" y="84" width="7" height="11" rx="2" />
+        <circle cx="29" cy="91" r="12" />
+        <circle cx="101" cy="89" r="12" />
+        <circle cx="155" cy="95" r="13" />
+        <circle cx="179" cy="95" r="13" />
+        <circle cx="219" cy="95" r="13" />
       </g>
       <g fill="#12396d">
-        <path d="M52 46h22v13H42zM79 46h21l12 13H79z" />
-        <path d="M164 54h25l20 20h-45z" />
-        <circle cx="49" cy="95" r="8" />
-        <circle cx="89" cy="95" r="8" />
-        <circle cx="191" cy="95" r="8" />
-      </g>
-      <g fill="currentColor">
-        <circle cx="49" cy="95" r="3" />
-        <circle cx="89" cy="95" r="3" />
-        <circle cx="191" cy="95" r="3" />
+        <path d="M17 42h16v22H17zM38 42h16v22H38zM59 42h16v22H59zM80 42h16v22H80zM101 42h10l6 9v13h-16z" />
+        <path d="M198 52h12l14 20h-26z" />
+        {[ [29, 91], [101, 89], [155, 95], [179, 95], [219, 95] ].map(([x, y]) => <circle key={x} cx={x} cy={y} r="6" />)}
       </g>
     </svg>
   );
@@ -40,8 +33,8 @@ const recoverySteps = [
     title: "Tell us where",
     label: "YOUR LOCATION",
     icon: "pin",
-    text: "Start with your location, vehicle, and what happened. A landmark or highway marker helps us understand where you are.",
-    detail: "Location · Vehicle · Situation",
+    text: "Start with your location, your vehicle, and what happened. A landmark or highway marker helps us understand where you are.",
+    detail: "Location · Vehicle & load · Situation",
   },
   {
     title: "Make a plan",
@@ -59,7 +52,7 @@ const recoverySteps = [
   },
 ];
 
-export function RecoveryWalkthrough({ onHelp }) {
+export function RecoveryWalkthrough() {
   const [step, setStep] = useState(0);
   const root = useRef(null);
   const current = recoverySteps[step];
@@ -193,16 +186,10 @@ export function RecoveryWalkthrough({ onHelp }) {
           <p>{current.text}</p>
           <span className="recovery-step-checks">{current.detail}</span>
         </div>
-        <button
-          className="svc-button svc-button-orange"
-          onClick={(event) => {
-            event.currentTarget.focus();
-            onHelp();
-          }}
-        >
+        <a className="svc-button svc-button-orange" href={business.phoneHref}>
           <span>Let’s make your plan</span>
-          <Icon name="arrow" />
-        </button>
+          <Icon name="phone" />
+        </a>
       </div>
     </section>
   );

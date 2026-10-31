@@ -9,7 +9,7 @@ import "./navigation.css";
 
 const pathname = window.location.pathname;
 const detailId = pathname.match(
-  /^\/services\/(towing|roadside|heavy)(?:\/(?:index\.html)?)?$/,
+  /^\/services\/(towing|roadside|heavy|equipment|offloading)(?:\/(?:index\.html)?)?$/,
 )?.[1];
 const page = detailId
   ? `service-${detailId}`

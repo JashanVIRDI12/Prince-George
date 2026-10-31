@@ -4,14 +4,14 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url("/fonts/barlow-condensed-800.ttf") format("truetype");
+  src: url("/fonts/barlow-condensed-800.woff2") format("woff2");
 }
 @font-face {
   font-family: "Barlow Condensed";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/barlow-condensed-700.ttf") format("truetype");
+  src: url("/fonts/barlow-condensed-700.woff2") format("woff2");
 }
 :root {
   --orange: #fe5201;
@@ -384,6 +384,7 @@ section[id] {
   z-index: 3;
   pointer-events: none;
 }
+.hero-text a,
 .hero-text button {
   pointer-events: auto;
 }
@@ -2645,7 +2646,7 @@ section[id] {
     height: 5px;
     width: 5px;
   }
-  .mobile-help > button {
+  .mobile-help > a {
     display: flex;
     align-items: center;
     gap: 20px;
@@ -3058,4 +3059,138 @@ html {
 .dispatch-call .icon {
   height: 17px;
   width: 17px;
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 26px;
+  margin-top: 22px;
+}
+.hero-actions .hero-cta {
+  margin-top: 0;
+}
+.hero-phone {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 26px;
+  border-left: 1px solid rgba(4, 35, 86, 0.3);
+  color: var(--navy);
+}
+.hero-phone-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+}
+.hero-phone-number {
+  font-family: var(--display);
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.2px;
+}
+.hero-phone:hover .hero-phone-number,
+.hero-phone:focus-visible .hero-phone-number {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .hero-phone {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+/* Keep the supplied fleet photograph intact and clear beside the headline. */
+.hero-heavy {
+  display: grid;
+  grid-template-columns: 42% minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 48px var(--gutter) 100px;
+}
+.hero-heavy .hero-text {
+  padding: 0;
+}
+.hero-heavy .hero-title {
+  font-size: clamp(96px, 9.2vw, 160px);
+}
+.hero-heavy .hero-visual {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  mask-image: none;
+}
+.hero-heavy .hero-visual-inner {
+  overflow: hidden;
+  border-radius: 6px;
+  box-shadow: 0 18px 48px rgb(4 35 86 / 15%);
+}
+.hero-heavy .hero-visual img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  mix-blend-mode: normal;
+  mask-image: none;
+}
+.hero-heavy .hero-bottom-content {
+  margin-top: 26px;
+}
+.hero-heavy .hero-stamp {
+  top: 36px;
+  right: var(--gutter);
+}
+@media (max-width: 1100px) and (min-width: 701px) {
+  .hero-heavy {
+    grid-template-columns: 43% minmax(0, 1fr);
+    gap: 18px;
+  }
+  .hero-heavy .hero-title {
+    font-size: clamp(86px, 10vw, 110px);
+  }
+  .hero-heavy .hero-stamp {
+    width: 100px;
+    height: 100px;
+  }
+}
+@media (max-width: 700px) {
+  .hero-heavy {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 29px var(--gutter) 96px;
+  }
+  .hero-heavy .hero-text {
+    display: contents;
+  }
+  .hero-heavy .hero-eyebrow {
+    grid-row: 1;
+  }
+  .hero-heavy .hero-title {
+    grid-row: 2;
+    font-size: clamp(88px, 23vw, 150px);
+    margin-top: 0;
+  }
+  .hero-heavy .hero-visual {
+    grid-row: 3;
+  }
+  .hero-heavy .hero-bottom-content {
+    grid-row: 4;
+    margin-top: 0;
+    padding-bottom: 0;
+  }
+  .hero-heavy .hero-stamp {
+    top: 105px;
+    width: 78px;
+    height: 78px;
+  }
+  .hero-heavy .hero-coordinates {
+    top: auto;
+    bottom: 35px;
+  }
+  .hero-heavy .hero-scroll > span:first-child {
+    display: none;
+  }
 }

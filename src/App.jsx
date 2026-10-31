@@ -1,13 +1,14 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { business, services } from "./data";
+import { business } from "./data";
 import Experience, { SiteFooter, serviceVisuals } from "./Experience";
 import { Brand, Icon } from "./icons";
 import ServicesPage from "./ServicesPage";
 import ServiceDetailPage from "./ServiceDetailPage";
 import AboutPage from "./AboutPage";
 import ContactPage from "./ContactPage";
+import RoadSequence from "./RoadSequence";
 import { serviceDetails } from "./serviceContent";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -77,282 +78,6 @@ function Modal({ children, onClose, className = "", titleId }) {
   );
 }
 
-function RequestModal({ onClose, initialService = "towing" }) {
-  const [form, setForm] = useState({
-    service: initialService,
-    location: "",
-    vehicle: "",
-    destination: "",
-    name: "",
-    phone: "",
-  });
-  const [step, setStep] = useState(1);
-  const [geoState, setGeoState] = useState("");
-  const [copyState, setCopyState] = useState("");
-  const summaryRef = useRef(null);
-  const update = (e) =>
-    setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-  const serviceName = services.find((s) => s.id === form.service)?.title;
-  const summary = `PRINCE GEORGE TOWING — SERVICE REQUEST\nService: ${serviceName}\nLocation: ${form.location}\nVehicle: ${form.vehicle}\nDestination: ${form.destination || "To be discussed"}\nName: ${form.name}\nPhone: ${form.phone}`;
-  useEffect(() => {
-    if (step === 2) summaryRef.current?.focus();
-  }, [step]);
-  const locate = () => {
-    if (!navigator.geolocation) {
-      setGeoState(
-        "Location isn’t available here. Please enter your nearest address or landmark.",
-      );
-      return;
-    }
-    setGeoState("Finding your location…");
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setForm((f) => ({
-          ...f,
-          location: `${position.coords.latitude.toFixed(5)}, ${position.coords.longitude.toFixed(5)}`,
-        }));
-        setGeoState("Location added. Include a nearby landmark if you can.");
-      },
-      () =>
-        setGeoState(
-          "Couldn’t access your location. Please enter an address or nearby landmark.",
-        ),
-      { timeout: 10000, enableHighAccuracy: true },
-    );
-  };
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(summary);
-      setCopyState("Details copied");
-    } catch {
-      setCopyState(
-        "Copy isn’t available in this browser. Use “Save details” instead.",
-      );
-    }
-  };
-  const save = () => {
-    const url = URL.createObjectURL(
-      new Blob([summary], { type: "text/plain" }),
-    );
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "prince-george-towing-request.txt";
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  };
-  return (
-    <Modal onClose={onClose} titleId="request-title" className="request-modal">
-      <span className="eyebrow">
-        <span className="status-dot" /> LET’S GET YOU MOVING
-      </span>
-      <h2 id="request-title">
-        {step === 1 ? (
-          <>
-            Let’s make
-            <br />
-            your next move.
-          </>
-        ) : (
-          <>
-            Your next step,
-            <br />
-            ready.
-          </>
-        )}
-      </h2>
-      {step === 1 ? (
-        <>
-          <p className="modal-lead">
-            Tell us what’s happening. We’ll put your details together so you’re
-            ready to arrange help.
-          </p>
-          {business.phone && (
-            <a className="dispatch-call" href={business.phoneHref}>
-              <Icon name="phone" /> Need help now? Call {business.phone}
-            </a>
-          )}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setStep(2);
-            }}
-          >
-            <fieldset className="service-choices">
-              <legend>What can we help with?</legend>
-              {services.map((s) => (
-                <label
-                  key={s.id}
-                  className={form.service === s.id ? "selected" : ""}
-                >
-                  <input
-                    type="radio"
-                    name="service"
-                    value={s.id}
-                    checked={form.service === s.id}
-                    onChange={update}
-                  />
-                  <span>{s.title}</span>
-                  <Icon name={form.service === s.id ? "check" : "plus"} />
-                </label>
-              ))}
-            </fieldset>
-            <div className="location-label">
-              <label htmlFor="request-location">
-                Your location <span>*</span>
-              </label>
-              <button
-                type="button"
-                onClick={locate}
-                disabled={geoState === "Finding your location…"}
-              >
-                <Icon name="locate" /> Use my location
-              </button>
-            </div>
-            <input
-              id="request-location"
-              name="location"
-              placeholder="Street, highway marker, or nearest landmark"
-              value={form.location}
-              onChange={update}
-              required
-              autoComplete="street-address"
-              maxLength={200}
-            />
-            {geoState && (
-              <p className="field-message" role="status">
-                {geoState}
-              </p>
-            )}
-            <div className="form-grid">
-              <label>
-                Vehicle <span>*</span>
-                <input
-                  name="vehicle"
-                  placeholder="e.g. 2020 Toyota RAV4"
-                  value={form.vehicle}
-                  onChange={update}
-                  required
-                  maxLength={100}
-                />
-              </label>
-              <label>
-                Destination <span className="optional">(optional)</span>
-                <input
-                  name="destination"
-                  placeholder="Where do you need to go?"
-                  value={form.destination}
-                  onChange={update}
-                  maxLength={200}
-                />
-              </label>
-              <label>
-                Your name <span>*</span>
-                <input
-                  name="name"
-                  placeholder="First name"
-                  value={form.name}
-                  onChange={update}
-                  autoComplete="given-name"
-                  required
-                  maxLength={80}
-                />
-              </label>
-              <label>
-                Phone number <span>*</span>
-                <input
-                  name="phone"
-                  type="tel"
-                  placeholder="Your callback number"
-                  value={form.phone}
-                  onChange={update}
-                  autoComplete="tel"
-                  required
-                  pattern={String.raw`[+0-9 .\(\)\-]{7,25}`}
-                  title="Enter a phone number with at least 7 characters"
-                  maxLength={25}
-                />
-              </label>
-            </div>
-            <ActionButton type="submit" className="button-blue">
-              Prepare my request
-            </ActionButton>
-            <p className="form-note">
-              Your details stay in this browser until you choose to share them.
-              Preparing a request does not dispatch a truck.
-            </p>
-          </form>
-        </>
-      ) : (
-        <div ref={summaryRef} tabIndex={-1} className="request-summary">
-          <p className="modal-lead">
-            Your details are ready. Contact dispatch to confirm your service,
-            availability, and price.
-          </p>
-          <dl>
-            <div>
-              <dt>Service</dt>
-              <dd>{serviceName}</dd>
-            </div>
-            <div>
-              <dt>Pickup</dt>
-              <dd>{form.location}</dd>
-            </div>
-            <div>
-              <dt>Vehicle</dt>
-              <dd>{form.vehicle}</dd>
-            </div>
-            <div>
-              <dt>Destination</dt>
-              <dd>{form.destination || "To be discussed"}</dd>
-            </div>
-            <div>
-              <dt>Contact</dt>
-              <dd>
-                {form.name} · {form.phone}
-              </dd>
-            </div>
-          </dl>
-          {business.phone ? (
-            <ActionButton
-              href={business.phoneHref}
-              className="button-blue"
-              icon="phone"
-            >
-              Call {business.phone}
-            </ActionButton>
-          ) : (
-            <p className="preview-notice">
-              This is a website preview. Dispatch is not connected and your
-              request has not been sent.
-            </p>
-          )}
-          <div className="summary-actions">
-            <button onClick={copy}>
-              <Icon name="copy" /> Copy details
-            </button>
-            <button onClick={save}>
-              <Icon name="down" /> Save details
-            </button>
-          </div>
-          <p role="status" className="field-message">
-            {copyState}
-          </p>
-          <button className="text-button" onClick={() => setStep(1)}>
-            ← Edit my details
-          </button>
-        </div>
-      )}
-      <div className="emergency-note">
-        <Icon name="shield" />
-        <span>
-          In immediate danger or a medical emergency? Call{" "}
-          <a href="tel:911">911</a>.
-        </span>
-      </div>
-    </Modal>
-  );
-}
-
 export default function App({ page = "home" }) {
   const isServicesPage = page === "services";
   const detailId = page.startsWith("service-") ? page.slice(8) : null;
@@ -367,14 +92,8 @@ export default function App({ page = "home" }) {
   const servicesMenuRef = useRef(null);
   const servicesToggleRef = useRef(null);
   const servicesCloseTimer = useRef(null);
-  const [request, setRequest] = useState(null);
   const [service, setService] = useState(null);
   const modal = service && (service.modal || service);
-  const help = (type = "towing") => {
-    setMenuOpen(false);
-    setService(null);
-    setRequest(type);
-  };
   const cancelServicesClose = () => {
     window.clearTimeout(servicesCloseTimer.current);
     servicesCloseTimer.current = null;
@@ -400,46 +119,6 @@ export default function App({ page = "home" }) {
     mm.add(
       "(prefers-reduced-motion: no-preference)",
       () => {
-        if (isHomePage) {
-          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-          tl.from(".hero-eyebrow", { y: 16, opacity: 0, duration: 0.7 }, 0.1)
-            .from(
-              ".hero-title-line span",
-              { yPercent: 110, rotate: 3, duration: 1.1, stagger: 0.13 },
-              0.15,
-            )
-            .from(".hero-visual", { x: 90, opacity: 0, duration: 1.5 }, 0.35)
-            .from(
-              ".hero-bottom-content",
-              { y: 20, opacity: 0, duration: 0.8 },
-              0.7,
-            )
-            .from(
-              ".hero-stamp",
-              { scale: 0.7, rotation: -40, opacity: 0, duration: 1 },
-              0.6,
-            );
-          gsap.to(".hero-visual-inner", {
-            yPercent: 10,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".hero",
-              start: "top top",
-              end: "bottom top",
-              scrub: 1,
-            },
-          });
-          gsap.to(".hero-stamp svg", {
-            rotation: 100,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".hero",
-              start: "top top",
-              end: "bottom top",
-              scrub: 1.5,
-            },
-          });
-        }
         gsap.to(".page-progress", {
           scaleX: 1,
           transformOrigin: "left center",
@@ -522,7 +201,7 @@ export default function App({ page = "home" }) {
     let cancelled = false;
     let frame;
     let revision = 0;
-    const alignHash = (event) => {
+    const alignHash = () => {
       const targetId = window.location.hash.slice(1);
       if (!targetId) return;
       const currentRevision = ++revision;
@@ -536,11 +215,10 @@ export default function App({ page = "home" }) {
           // Refresh restores the document's scroll behavior on the next frame.
           frame = requestAnimationFrame(() => {
             target.scrollIntoView({
-              behavior:
-                event?.type === "hashchange" &&
-                !window.matchMedia("(prefers-reduced-motion: reduce)").matches
-                  ? "smooth"
-                  : "instant",
+              // A later ScrollTrigger refresh can interrupt native smooth
+              // scrolling while gallery layout is changing, leaving the
+              // destination off screen in mobile WebKit.
+              behavior: "instant",
               block: "start",
             });
             ScrollTrigger.update();
@@ -604,7 +282,7 @@ export default function App({ page = "home" }) {
               <div className="services-dropdown-grid">
                 {serviceDetails.map((item) => (
                   <a href={item.path} key={item.id} aria-current={detailId === item.id ? "page" : undefined}>
-                    <span className="services-dropdown-photo"><img src={item.image} alt="" width="1536" height="1024" /></span>
+                    <span className="services-dropdown-photo"><img src={item.image} alt="" width="1536" height="1024" loading="lazy" /></span>
                     <span className="services-dropdown-meta">{item.number} / {item.category}</span>
                     <strong>{item.title}</strong>
                     <span className="services-dropdown-copy">{item.indexCopy}</span>
@@ -627,7 +305,7 @@ export default function App({ page = "home" }) {
           </span>
           <ActionButton
             className="header-help button-blue"
-            onClick={() => help()}
+            href={business.phoneHref}
             icon="phone"
           >
             Get help now
@@ -689,124 +367,75 @@ export default function App({ page = "home" }) {
             </a>
           ))}
           <ActionButton
-            onClick={() => help()}
+            href={business.phoneHref}
+            onClick={() => setMenuOpen(false)}
             className="button-orange"
             icon="phone"
           >
-            Get roadside help
+            Get towing help
           </ActionButton>
         </nav>
       )}
       <main id="main">
         {isContactPage ? (
-          <ContactPage onHelp={help} />
+          <ContactPage />
         ) : isAboutPage ? (
-          <AboutPage onHelp={help} />
+          <AboutPage />
         ) : detailId ? (
-          <ServiceDetailPage id={detailId} onHelp={help} />
+          <ServiceDetailPage id={detailId} />
         ) : isServicesPage ? (
-          <ServicesPage onHelp={help} />
+          <ServicesPage />
         ) : (
           <>
-            <section className="hero" id="home">
-              <div className="hero-text">
-                <div className="eyebrow hero-eyebrow">
-                  <span className="status-dot" /> YOUR LOCAL TOWING SUPPORT
-                </div>
-                <h1 className="hero-title">
-                  <span className="hero-title-line">
-                    <span>STUCK ON</span>
+            <RoadSequence>
+              <div className="eyebrow road-sequence-eyebrow">
+                <span className="status-dot" /> CARS / HEAVY DUTY / EQUIPMENT / OFFLOADING
+              </div>
+              <h1 className="road-sequence-title" id="home-heading">
+                <span className="road-sequence-line">
+                  <span>TOWING &amp;</span>
+                </span>{" "}
+                <span className="road-sequence-line">
+                  <span>
+                    RECOVERY<span className="road-sequence-period">.</span>
                   </span>
-                  <span className="hero-title-line">
-                    <span>THE ROAD?</span>
-                  </span>
-                  <span className="hero-title-line">
-                    <span>
-                      CALL US<span className="title-period">.</span>
-                    </span>
-                  </span>
-                </h1>
-                <div className="hero-bottom-content">
-                  <p>
-                    Towing and roadside assistance in Prince George, BC. Tell
-                    us where you are and what happened, and we’ll help you get
-                    moving.
-                  </p>
-                  <ActionButton
-                    onClick={() => help()}
-                    className="button-blue hero-cta"
-                    icon="arrow"
-                  >
-                    Get in touch with us
-                  </ActionButton>
-                  <div className="hero-small-note">
-                    <Icon name="clock" />
-                    <span>AROUND THE CLOCK. AROUND THE CORNER.</span>
-                  </div>
-                </div>
-              </div>
-              <div className="hero-visual">
-                <div className="hero-visual-inner">
-                  <img
-                    src="/images/hero-tow-truck.webp"
-                    alt="Cobalt blue recovery truck against a vivid orange landscape"
-                    fetchPriority="high"
-                    width="1536"
-                    height="1024"
-                  />
-                </div>
-              </div>
-              <div className="hero-outline-text" aria-hidden="true">
-                24/7
-              </div>
-              <div
-                className="hero-stamp"
-                role="img"
-                aria-label="Northern roads. Local heroes."
-              >
-                <svg viewBox="0 0 150 150" aria-hidden="true">
-                  <defs>
-                    <path
-                      id="stamp-circle"
-                      d="M75,75m-56,0a56,56 0 1,1 112,0a56,56 0 1,1 -112,0"
-                    />
-                  </defs>
-                  <circle cx="75" cy="75" r="73" />
-                  <circle cx="75" cy="75" r="42" />
-                  <text>
-                    <textPath href="#stamp-circle" textLength="347">
-                      NORTHERN ROADS. LOCAL HEROES. ✦{" "}
-                    </textPath>
-                  </text>
-                </svg>
-                <Icon name="arrow" />
-              </div>
-              <div className="hero-coordinates">
-                <span>53°55′ N</span>
-                <span>122°45′ W</span>
-                <span className="coordinate-line" />
-                <span>READY WHEN YOU NEED US.</span>
-              </div>
-              <a href="#services" className="hero-scroll">
-                <span>THERE’S A WAY FORWARD</span>
-                <span className="scroll-circle">
-                  <Icon name="down" />
                 </span>
-              </a>
-            </section>
+              </h1>
+              <div className="road-sequence-intro">
+                <p>
+                  Towing for cars, SUVs, and pickups, plus heavy-duty
+                  recovery for buses, semi trucks, and commercial fleets, and
+                  heavy equipment transport and offloading in Prince George, BC. Tell us what needs
+                  moving. We’ll plan the right response.
+                </p>
+                <div className="hero-actions">
+                  <ActionButton
+                    href={business.phoneHref}
+                    className="button-orange hero-cta"
+                    icon="phone"
+                  >
+                    Call for a tow
+                  </ActionButton>
+                  <a className="hero-phone" href={business.phoneHref}>
+                    <span className="hero-phone-label">DISPATCH, 24/7</span>
+                    <span className="hero-phone-number">{business.phone}</span>
+                  </a>
+                </div>
+              </div>
+            </RoadSequence>
 
-            <Experience onHelp={help} onService={setService} />
+            <Experience onService={setService} />
           </>
         )}
       </main>
-      <SiteFooter onHelp={help} homePrefix={homePrefix} />
+      <SiteFooter homePrefix={homePrefix} />
       <div className="mobile-help new-mobile-help">
         <span>
           <span className="status-dot" /> NEED A HAND?
         </span>
-        <button onClick={() => help()}>
-          Get help now <Icon name="arrow" />
-        </button>
+        <a href={business.phoneHref}>
+          Call {business.phone} <Icon name="phone" />
+        </a>
       </div>
       {service && modal && (
         <Modal
@@ -819,8 +448,8 @@ export default function App({ page = "home" }) {
           </div>
           <img
             className="modal-service-photo"
-            src={serviceVisuals[service.id].src}
-            alt={serviceVisuals[service.id].alt}
+            src={modal.image ?? serviceVisuals[service.id].src}
+            alt={modal.alt ?? serviceVisuals[service.id].alt}
             width="1536"
             height="1024"
           />
@@ -837,7 +466,8 @@ export default function App({ page = "home" }) {
           {modal.detail && <p className="service-detail">{modal.detail}</p>}
           <ActionButton
             className="button-blue"
-            onClick={() => help(service.id)}
+            href={business.phoneHref}
+            icon="phone"
           >
             {modal.action || "Get help with this"}
           </ActionButton>
@@ -851,12 +481,6 @@ export default function App({ page = "home" }) {
             </a>
           )}
         </Modal>
-      )}
-      {request && (
-        <RequestModal
-          initialService={request}
-          onClose={() => setRequest(null)}
-        />
       )}
     </div>
   );
